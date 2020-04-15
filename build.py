@@ -49,6 +49,9 @@ for yep in os.listdir(__here__ / "yeps"):
         yeps.append(YEP(**kwargs))
 
 
+yeps.sort(key=lambda y: y.index)
+
+
 # index -------------------------------------------------------------------------------------------
 
 
@@ -58,7 +61,7 @@ if not os.path.isdir(__here__ / "public"):
 
 template = env.get_template("index.html")
 with open(__here__ / "public" / "index.html", "w") as f:
-    f.write(template.render(yeps=yeps, title="blog", date=date))
+    f.write(template.render(yeps=yeps, title="yaq enhancement proposals", date=date))
 
 
 # posts -------------------------------------------------------------------------------------------
