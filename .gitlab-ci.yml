@@ -1,0 +1,20 @@
+image: python:latest
+
+stages:
+  - test
+  - deploy
+
+before_script:
+  - python -V
+  - pip install jinja2 -U
+  - pip install markdown -U
+
+pages:
+  stage: deploy
+  script:
+  - python build.py
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
