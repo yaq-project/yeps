@@ -1,0 +1,35 @@
+a {
+  text-decoration: none;
+  color: #81a2be;
+}
+
+body {
+  font-family: sans-serif;
+  margin: 40px auto;
+  max-width: 650px;
+  line-height: 1.5;
+  font-size: 16px;
+  background-color: #1d1f21;
+  color: #c5c8c6;
+  padding: 0 10px;
+  text-align: left;
+}
+
+.singlespaced {
+  line-height: 1;
+}
+
+.horizontal {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    justify-content: space-between;
+}
+
+.tab30 {
+  margin-left: 30px;
+}
+
+.tab60 {
+  margin-left: 60px;
+}
