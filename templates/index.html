@@ -6,6 +6,15 @@
 
 <hr>
 
+<p>
 hello world
+</p>
+
+<p>
+yeps: <br>
+{% for yep in yeps %}
+  <a href="./{{ yep.index }}">{{ yep.index }}:{{ yep.title }}</a> <br>
+{% endfor %}
+</p>
 
 {% include "footer.html" %}
