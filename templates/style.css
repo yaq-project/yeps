@@ -4,15 +4,17 @@ a {
 }
 
 body {
-  font-family: sans-serif;
+  font-family: 'DejaVu Sans Mono', monospace;
   margin: 40px auto;
-  max-width: 650px;
+  min-width: 80ch;
+  max-width: 80ch;
   line-height: 1.5;
   font-size: 16px;
   background-color: #1d1f21;
   color: #c5c8c6;
   padding: 0 10px;
   text-align: left;
+  overflow-y: scroll;
 }
 
 .singlespaced {
