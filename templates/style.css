@@ -8,24 +8,29 @@ body {
   margin: 40px auto;
   min-width: 80ch;
   max-width: 80ch;
-  line-height: 1.5;
   font-size: 16px;
   background-color: #1d1f21;
   color: #c5c8c6;
   padding: 0 10px;
   text-align: left;
   overflow-y: scroll;
+  line-height: 1.5;
 }
 
-.singlespaced {
-  line-height: 1;
+pre {
+  background: #000000;
+}
+
+code {
+  background: #000000;
+  color: #eaeaea;
 }
 
 .horizontal {
-    display: flex;
-    list-style-type: none;
-    padding: 0;
-    justify-content: space-between;
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  justify-content: space-between;
 }
 
 .tab30 {
