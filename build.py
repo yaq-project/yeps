@@ -12,7 +12,7 @@ __here__ = pathlib.Path(__file__).resolve().parent
 date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-extension_configs = {"toc": {"permalink": True}}
+extension_configs = {"toc": {"permalink": " ¶"}}
 md = markdown.Markdown(extensions=["meta", "toc", "extra"], extension_configs=extension_configs)
 
 
