@@ -4,32 +4,32 @@ a {
 }
 
 body {
-  font-family: sans-serif;
+  font-family: 'DejaVu Sans Mono', monospace;
   margin: 40px auto;
-  max-width: 650px;
-  line-height: 1.5;
+  min-width: 80ch;
+  max-width: 80ch;
   font-size: 16px;
   background-color: #1d1f21;
   color: #c5c8c6;
   padding: 0 10px;
   text-align: left;
+  overflow-y: scroll;
+  line-height: 1.5;
 }
 
-.singlespaced {
-  line-height: 1;
+pre {
+  width: 80ch;
+  padding: 15px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: auto;
+  overflow-y: hidden;
+  font-size: 15.3px;
+  background: #111314;
+  border: 1px solid #c5c8c6;
 }
 
-.horizontal {
-    display: flex;
-    list-style-type: none;
-    padding: 0;
-    justify-content: space-between;
-}
-
-.tab30 {
-  margin-left: 30px;
-}
-
-.tab60 {
-  margin-left: 60px;
+code {
+  background: #111314;
+  color: #de935f
 }

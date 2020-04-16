@@ -9,13 +9,14 @@ from dataclasses import dataclass
 __here__ = pathlib.Path(__file__).resolve().parent
 
 
-date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-md = markdown.Markdown(extensions=['meta', "toc"])
+extension_configs = {"toc": {"permalink": " ¶"}}
+md = markdown.Markdown(extensions=["meta", "toc", "extra"], extension_configs=extension_configs)
 
 
-env = jinja2.Environment(loader = jinja2.FileSystemLoader(str(__here__ / "templates")))
+env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(__here__ / "templates")))
 
 
 # grab yeps --------------------------------------------------------------------------------------
@@ -28,7 +29,7 @@ class YEP:
     author: str
     status: str
     yep_type: str
-    #yaq_version: str
+    # yaq_version: str
     content: str
 
 
@@ -44,7 +45,7 @@ for yep in os.listdir(__here__ / "yeps"):
         kwargs["author"] = md.Meta["author"][0]
         kwargs["status"] = md.Meta["status"][0]
         kwargs["yep_type"] = md.Meta["type"][0]
-        #kwargs["yaq_version"] = md.Meta["yaq version"][0]
+        # kwargs["yaq_version"] = md.Meta["yaq version"][0]
         kwargs["content"] = content
         yeps.append(YEP(**kwargs))
 
@@ -78,7 +79,7 @@ for yep in yeps:
 # css ---------------------------------------------------------------------------------------------
 
 
-template = env.get_template('style.css')
+template = env.get_template("style.css")
 for d, _, _ in os.walk(__here__ / "public", topdown=False):
-    with open(os.path.join(d, "style.css"), 'w') as f:
+    with open(os.path.join(d, "style.css"), "w") as f:
         f.write(template.render())
