@@ -25,10 +25,11 @@ pre {
   overflow: auto;
   overflow-y: hidden;
   font-size: 15.3px;
-  background: #000000;
+  background: #111314;
   border: 1px solid #c5c8c6;
 }
 
 code {
-  background: #000000;
+  background: #111314;
+  color: #de935f
 }

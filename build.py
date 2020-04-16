@@ -12,7 +12,8 @@ __here__ = pathlib.Path(__file__).resolve().parent
 date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-md = markdown.Markdown(extensions=["meta", "toc", "extra"])
+extension_configs = {"toc": {"permalink": True}}
+md = markdown.Markdown(extensions=["meta", "toc", "extra"], extension_configs=extension_configs)
 
 
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(__here__ / "templates")))
