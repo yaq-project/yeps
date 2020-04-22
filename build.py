@@ -40,7 +40,7 @@ for yep in os.listdir(__here__ / "yeps"):
         s = s.replace("# Abstract", "# Table of Contents\n[TOC]\n# Abstract")  # hack
         content = md.convert(s)
         kwargs = dict()
-        kwargs["index"] = md.Meta["yep"][0]
+        kwargs["index"] = int(md.Meta["yep"][0])
         kwargs["title"] = md.Meta["title"][0]
         kwargs["author"] = md.Meta["author"][0]
         kwargs["status"] = md.Meta["status"][0]
@@ -82,9 +82,9 @@ with open(__here__ / "public" / "0" / "index.html", "w") as f:
 
 template = env.get_template("yep.html")
 for yep in yeps:
-    if not os.path.isdir(__here__ / "public" / yep.index):
-        os.mkdir(__here__ / "public" / yep.index)
-    with open(__here__ / "public" / yep.index / "index.html", "w") as f:
+    if not os.path.isdir(__here__ / "public" / str(yep.index)):
+        os.mkdir(__here__ / "public" / str(yep.index))
+    with open(__here__ / "public" / str(yep.index) / "index.html", "w") as f:
         f.write(template.render(yep=yep, title=yep.title, date=date))
 
 
