@@ -1,0 +1,44 @@
+{% include "header.html"  %}
+
+<h1>
+<a href=https://yaq.fyi>yaq</a>-<a href="../">yeps</a>/0
+</h1>
+
+<hr>
+
+<h1>Index of yaq Enhancement Proposals</h1>
+
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#index-by-type">Index by Type</a></li>
+<li><a href="#index-by-status">Index by Status</a></li>
+<li><a href="#numerical-index">Numerical Index</a></li>
+</ul>
+</div>
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+
+<p>
+This YEP contains the index of all yaq Enhancement Proposals, known as YEPs. YEP numbers are assigned once, and once assigned are never changed. The version control history of the YEP texts represent their historical record.
+</p>
+
+<h1 id="index-by-type">Index by Type<a class="headerlink" href="#index-by-type" title="Permanent link"> ¶</a></h1>
+
+TODO
+
+<h1 id="index-by-status">Index by Status<a class="headerlink" href="#index-by-status" title="Permanent link"> ¶</a></h1>
+
+TODO
+
+<h1 id="numerical-index">Numerical Index<a class="headerlink" href="#numerical-index" title="Permanent link"> ¶</a></h1>
+
+<p>
+TODO:self reference <br>
+{% for yep in yeps %}
+  <a href="./{{ yep.index }}">{{ yep.index }}:{{ yep.title }}</a> <br>
+{% endfor %}
+</p>
+
+{% include "footer.html" %}

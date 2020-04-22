@@ -65,6 +65,18 @@ with open(__here__ / "public" / "index.html", "w") as f:
     f.write(template.render(yeps=yeps, title="yaq enhancement proposals", date=date))
 
 
+# YEP-0 -------------------------------------------------------------------------------------------
+
+
+if not os.path.isdir(__here__ / "public"/ "0"):
+    os.mkdir(__here__ / "public" / "0")
+
+
+template = env.get_template("yep0.html")
+with open(__here__ / "public" / "0" / "index.html", "w") as f:
+    f.write(template.render(yeps=yeps, title="yaq enhancement proposals", date=date))
+
+
 # posts -------------------------------------------------------------------------------------------
 
 
