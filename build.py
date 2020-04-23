@@ -28,8 +28,6 @@ class YEP:
     title: str
     author: str
     status: str
-    yep_type: str
-    # yaq_version: str
     content: str
 
 
@@ -44,8 +42,6 @@ for yep in os.listdir(__here__ / "yeps"):
         kwargs["title"] = md.Meta["title"][0]
         kwargs["author"] = md.Meta["author"][0]
         kwargs["status"] = md.Meta["status"][0]
-        kwargs["yep_type"] = md.Meta["type"][0]
-        # kwargs["yaq_version"] = md.Meta["yaq version"][0]
         kwargs["content"] = content
         yeps.append(YEP(**kwargs))
 

@@ -1,11 +1,41 @@
 ---
 yep: 12
 title: Sample Markdown YEP Template
-author: Kyle Sunden
-status: Open
-type: Process
+author: Blaise Thompson <blaise@untzag.com>
+status: draft
+tags: meta
 created: 2020-04-22
 post-history: 2020-04-22
 ---
 
-This YEP is a stub.
+# Abstract
+
+This YEP is intentionally left blank to serve as a template.
+This YEP's status will always remain "draft".
+Please follow the following checklist when using this template:
+
+- copy the markdown source of this yep to a new file `yep-<index>.md`
+- change the yep index
+- choose a title
+- update author information
+- update tags
+- update created date and post-history
+- spawn a discussion and link under the discussion section
+- delete this template abstract
+
+The headers used here are only suggestions, and some of them may be changed as needed.
+The canonical reference for required and suggested YEP content is <a href="../1">YEP-1</a>.
+
+# Motivation
+
+# Proposal
+
+# Rejected Ideas
+
+# Discussion
+
+Discussion can be found on the [gitlab issue](https://gitlab.com/yaq/yeps/-/issues/8) for this YEP.
+
+# Copyright
+
+This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.
