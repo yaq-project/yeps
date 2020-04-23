@@ -1,7 +1,7 @@
 {% include "header.html"  %}
 
 <h1>
-<a href=https://yaq.fyi>yaq</a>-<a href="../">yeps</a>/0
+<a href=https://yaq.fyi>yaq</a>-<a href="../000/">yeps</a>/000
 </h1>
 
 <hr>
@@ -37,7 +37,7 @@ TODO
 <p>
 TODO:self reference <br>
 {% for yep in yeps %}
-  <a href="../{{ yep.index }}">{{ yep.index }}:{{ yep.title }}</a> <br>
+  <a href="../{{ '%03d' | format(yep.index) }}">{{ '%03d' | format(yep.index) }}: {{ yep.title }}</a> <br>
 {% endfor %}
 </p>
 
