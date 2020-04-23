@@ -64,12 +64,12 @@ with open(__here__ / "public" / "index.html", "w") as f:
 # YEP-0 -------------------------------------------------------------------------------------------
 
 
-if not os.path.isdir(__here__ / "public"/ "0"):
-    os.mkdir(__here__ / "public" / "0")
+if not os.path.isdir(__here__ / "public"/ "000"):
+    os.mkdir(__here__ / "public" / "000")
 
 
 template = env.get_template("yep0.html")
-with open(__here__ / "public" / "0" / "index.html", "w") as f:
+with open(__here__ / "public" / "000" / "index.html", "w") as f:
     f.write(template.render(yeps=yeps, title="yaq enhancement proposals", date=date))
 
 
@@ -78,9 +78,9 @@ with open(__here__ / "public" / "0" / "index.html", "w") as f:
 
 template = env.get_template("yep.html")
 for yep in yeps:
-    if not os.path.isdir(__here__ / "public" / str(yep.index)):
-        os.mkdir(__here__ / "public" / str(yep.index))
-    with open(__here__ / "public" / str(yep.index) / "index.html", "w") as f:
+    if not os.path.isdir(__here__ / "public" / str(yep.index).zfill(3)):
+        os.mkdir(__here__ / "public" / str(yep.index).zfill(3))
+    with open(__here__ / "public" / str(yep.index).zfill(3) / "index.html", "w") as f:
         f.write(template.render(yep=yep, title=yep.title, date=date))
 
 
