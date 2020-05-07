@@ -12,8 +12,18 @@
 <div class="toc">
 <ul>
 <li><a href="#table-of-contents">Table of Contents</a></li>
-<li><a href="#index-by-type">Index by Type</a></li>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#index-by-tag">Index by Tag</a></li>
+<ul>
+{% for t in tags %}
+<li><a href="#{{ t }}">{{ t }}</a></li>
+{% endfor %}
+</ul>
 <li><a href="#index-by-status">Index by Status</a></li>
+<ul>
+<li><a href="#draft">Draft</a></li>
+<li><a href="#accepted">Accepted</a></li>
+</ul>
 <li><a href="#numerical-index">Numerical Index</a></li>
 </ul>
 </div>
@@ -24,18 +34,44 @@
 This YEP contains the index of all yaq Enhancement Proposals, known as YEPs. YEP numbers are assigned once, and once assigned are never changed. The version control history of the YEP texts represent their historical record.
 </p>
 
-<h1 id="index-by-type">Index by Type<a class="headerlink" href="#index-by-type" title="Permanent link"> ¶</a></h1>
+<h1 id="index-by-tag">Index by Tag<a class="headerlink" href="#index-by-tag" title="Permanent link"> ¶</a></h1>
 
-TODO
+{% for t in tags %}
+<h2 id="{{ t }}">{{ t }}<a class="headerlink" href="#{{ t }}" title="Permanent link"> ¶</a></h2>
+<p>
+{% for yep in yeps %}
+{% if t in yep.tags %}
+<a href="../{{ '%03d' | format(yep.index) }}">{{ '%03d' | format(yep.index) }}: {{ yep.title }}</a> <br>
+{% endif %}
+{% endfor %}
+</p>
+{% endfor %}
 
 <h1 id="index-by-status">Index by Status<a class="headerlink" href="#index-by-status" title="Permanent link"> ¶</a></h1>
 
-TODO
+<h2 id="draft">Draft<a class="headerlink" href="#draft" title="Permanent link"> ¶</a></h2>
+
+<p>
+{% for yep in yeps %}
+{% if yep.status == "draft" %}
+<a href="../{{ '%03d' | format(yep.index) }}">{{ '%03d' | format(yep.index) }}: {{ yep.title }}</a> <br>
+{% endif %}
+{% endfor %}
+</p>
+
+<h2 id="accepted">Accepted<a class="headerlink" href="#accepted" title="Permanent link"> ¶</a></h2>
+
+<p>
+{% for yep in yeps %}
+{% if yep.status == "accepted" %}
+<a href="../{{ '%03d' | format(yep.index) }}">{{ '%03d' | format(yep.index) }}: {{ yep.title }}</a> <br>
+{% endif %}
+{% endfor %}
+</p>
 
 <h1 id="numerical-index">Numerical Index<a class="headerlink" href="#numerical-index" title="Permanent link"> ¶</a></h1>
 
 <p>
-TODO:self reference <br>
 {% for yep in yeps %}
   <a href="../{{ '%03d' | format(yep.index) }}">{{ '%03d' | format(yep.index) }}: {{ yep.title }}</a> <br>
 {% endfor %}
