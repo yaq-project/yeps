@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 import os
 import jinja2
 import markdown
@@ -13,21 +15,32 @@ date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 extension_configs = {"toc": {"permalink": " ¶"}}
-md = markdown.Markdown(extensions=["meta", "toc", "extra"], extension_configs=extension_configs)
+md = markdown.Markdown(
+    extensions=["meta", "toc", "extra"], extension_configs=extension_configs
+)
 
 
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(__here__ / "templates")))
 
 
+if not os.path.isdir(__here__ / "public"):
+    os.mkdir(__here__ / "public")
+
+
 # grab yeps --------------------------------------------------------------------------------------
+
+
+tags = ["meta", "standard", "yaq-RPC", "trait"]
 
 
 @dataclass
 class YEP:
     index: int
     title: str
-    author: str
+    authors: [str]
     status: str
+    tags: [str]
+    post_history: [str]
     content: str
 
 
@@ -40,37 +53,36 @@ for yep in os.listdir(__here__ / "yeps"):
         kwargs = dict()
         kwargs["index"] = int(md.Meta["yep"][0])
         kwargs["title"] = md.Meta["title"][0]
-        kwargs["author"] = md.Meta["author"][0]
+        kwargs["authors"] = md.Meta["author"]
         kwargs["status"] = md.Meta["status"][0]
+        kwargs["tags"] = md.Meta["tags"]
+        kwargs["post_history"] = md.Meta["post-history"]
         kwargs["content"] = content
+        for t in kwargs["tags"]:
+            assert t in tags
         yeps.append(YEP(**kwargs))
 
 
 yeps.sort(key=lambda y: y.index)
 
 
-# index -------------------------------------------------------------------------------------------
-
-
-if not os.path.isdir(__here__ / "public"):
-    os.mkdir(__here__ / "public")
-
-
-template = env.get_template("index.html")
-with open(__here__ / "public" / "index.html", "w") as f:
-    f.write(template.render(yeps=yeps, title="yaq enhancement proposals", date=date))
-
-
 # YEP-0 -------------------------------------------------------------------------------------------
 
 
-if not os.path.isdir(__here__ / "public"/ "000"):
+if not os.path.isdir(__here__ / "public" / "000"):
     os.mkdir(__here__ / "public" / "000")
 
 
 template = env.get_template("yep0.html")
 with open(__here__ / "public" / "000" / "index.html", "w") as f:
-    f.write(template.render(yeps=yeps, title="yaq enhancement proposals", date=date))
+    f.write(
+        template.render(
+            yeps=yeps,
+            title="yaq enhancement proposals",
+            date=date,
+            tags=tags,
+        )
+    )
 
 
 # posts -------------------------------------------------------------------------------------------
