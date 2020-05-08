@@ -23,10 +23,6 @@ md = markdown.Markdown(
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(__here__ / "templates")))
 
 
-if not os.path.isdir(__here__ / "public"):
-    os.mkdir(__here__ / "public")
-
-
 # grab yeps --------------------------------------------------------------------------------------
 
 
@@ -64,6 +60,17 @@ for yep in os.listdir(__here__ / "yeps"):
 
 
 yeps.sort(key=lambda y: y.index)
+
+# index -------------------------------------------------------------------------------------------
+
+
+if not os.path.isdir(__here__ / "public"):
+    os.mkdir(__here__ / "public")
+
+
+template = env.get_template("index.html")
+with open(__here__ / "public" / "index.html", "w") as f:
+    f.write(template.render(yeps=yeps, title="yaq enhancement proposals", date=date))
 
 
 # YEP-0 -------------------------------------------------------------------------------------------
