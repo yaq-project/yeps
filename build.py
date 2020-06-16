@@ -44,7 +44,6 @@ yeps = []
 for yep in os.listdir(__here__ / "yeps"):
     with open(__here__ / "yeps" / yep, "r") as f:
         s = f.read()
-        s = s.replace("# Abstract", "# Table of Contents\n[TOC]\n# Abstract")  # hack
         content = md.convert(s)
         kwargs = dict()
         kwargs["index"] = int(md.Meta["yep"][0])
