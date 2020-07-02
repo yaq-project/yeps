@@ -69,6 +69,17 @@ This YEP contains the index of all yaq Enhancement Proposals, known as YEPs. YEP
 {% endfor %}
 </p>
 
+<h2 id="rejected">Rejected/Superceded<a class="headerlink" href="#rejected" title="Permanent link"> ¶</a></h2>
+
+<p>
+{% for yep in yeps %}
+{% if yep.status == "rejected" %}
+<a href="../{{ '%03d' | format(yep.index) }}">{{ '%03d' | format(yep.index) }}: {{ yep.title }}</a> <br>
+{% endif %}
+{% endfor %}
+</p>
+
+
 <h1 id="numerical-index">Numerical Index<a class="headerlink" href="#numerical-index" title="Permanent link"> ¶</a></h1>
 
 <p>
