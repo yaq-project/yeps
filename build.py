@@ -26,7 +26,7 @@ env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(__here__ / "template
 # grab yeps --------------------------------------------------------------------------------------
 
 
-tags = ["meta", "standard", "yaq-RPC", "trait"]
+tags = ["meta", "standard", "trait"]
 
 
 @dataclass
