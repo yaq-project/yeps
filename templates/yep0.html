@@ -41,7 +41,7 @@ This YEP contains the index of all yaq Enhancement Proposals, known as YEPs. YEP
 <p>
 {% for yep in yeps %}
 {% if t in yep.tags %}
-<a href="../{{ '%03d' | format(yep.index) }}">{{ '%03d' | format(yep.index) }}: {{ yep.title }}</a> <br>
+<a href="../{{ '%03d' | format(yep.index) }}">{{ '%03d' | format(yep.index) }}: {{ yep.title }}</a> {% if yep.status != "accepted" %} ({{yep.status}}) {% endif %}<br>
 {% endif %}
 {% endfor %}
 </p>
@@ -84,7 +84,7 @@ This YEP contains the index of all yaq Enhancement Proposals, known as YEPs. YEP
 
 <p>
 {% for yep in yeps %}
-  <a href="../{{ '%03d' | format(yep.index) }}">{{ '%03d' | format(yep.index) }}: {{ yep.title }}</a> <br>
+<a href="../{{ '%03d' | format(yep.index) }}">{{ '%03d' | format(yep.index) }}: {{ yep.title }}</a> {% if yep.status != "accepted" %} ({{yep.status}}) {% endif %}<br>
 {% endfor %}
 </p>
 
