@@ -39,6 +39,18 @@ class YEP:
     post_history: [str]
     content: str
 
+    @property
+    def metadata(self) -> str:
+        out = "<table>\n"
+        out += f"<tr><th>YEP:</th><td>{self.index}</td></tr>\n"
+        out += f"<tr><th>Title:</th><td>{self.title}</td></tr>\n"
+        out += f"<tr><th>Authors:</th><td>{', '.join(self.authors)}</td></tr>\n"
+        out += f"<tr><th>Status:</th><td>{self.status}</td></tr>\n"
+        out += f"<tr><th>Tags:</th><td>{', '.join(self.tags)}</td></tr>\n"
+        out += f"<tr><th>Post-History:</th><td>{', '.join(self.post_history)}</td></tr>\n"
+        out += "</table>\n"
+        return out
+
 
 yeps = []
 for yep in os.listdir(__here__ / "yeps"):
