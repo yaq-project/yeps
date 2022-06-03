@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>Using Apache Avro-RPC</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/107
+</h1>
+
+<hr>
+
+<h1>
+  Using Apache Avro-RPC
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>107</td></tr>
+<tr><th>Title:</th><td>Using Apache Avro-RPC</td></tr>
+<tr><th>Authors:</th><td>Kyle Sunden <yaq@ksunden.space></td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2020-07-02, 2020-07-05, 2020-10-29, 2020-12-09</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p><code>yaq</code> uses <a href="https://avro.apache.org">Apache Avro</a> to communicate schema information and serialize RPC calls/responses.
+Using explicit schemas communicated during the handshake makes type information very concrete and well determined, which we hope will make implementations outside of Python easier.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a><ul>
+<li><a href="#additional-information-in-avpr-file">Additional information in avpr file</a><ul>
+<li><a href="#traits">traits</a></li>
+<li><a href="#config">config</a></li>
+<li><a href="#state">state</a></li>
+<li><a href="#links-installation">links, installation</a></li>
+<li><a href="#hardware">hardware</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#rejected-ideas">Rejected Ideas</a></li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>The primary motivation behind using Avro is to have a standardized RPC format for the yaq ecosystem.
+Important considerations were having a well defined, flexible type system, support for binary data, and having a self describing protocol format.
+Specifically, we wanted a description that is explicitly static at time of writing the daemon, which limits dynamic behavior, making client interactions much more predictable.
+Avro fit that description very well, and its JSON protocol format provides an easy way to add in yaq ecosystem specific behavior in an otherwise valid Avro RPC protocol.
+We use the Avro protocol definition to provide a full description of the external behavior of the daemon: configuration, RPC calls, and state saving.
+Additionally documentation is included in the Avro protocol.</p>
+<p>The Avro protocol is not tied to any specific implementation of a yaq daemon.
+We have provided a tool, <a href="https://traits.yaq.fyi">yaq-traits</a> to make writing the Avro protocol easy.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<p>As we are using an outside specification, we will not copy the full specification here.
+The full specification can be found at <a href="https://avro.apache.org/docs/current/spec.html">Avro's Website</a></p>
+<p>yaq uses Avro as an RPC over TCP sockets (without http headers) with stateful handshaking supported.</p>
+<h2 id="additional-information-in-avpr-file">Additional information in avpr file<a class="headerlink" href="#additional-information-in-avpr-file" title="Permanent link"> ¶</a></h2>
+<h3 id="traits">traits<a class="headerlink" href="#traits" title="Permanent link"> ¶</a></h3>
+<p>List of string trait names.</p>
+<p>This can be used by implementations to validate that expected RPC calls are present.
+This can also be used by clients to make UI choices.</p>
+<h3 id="config">config<a class="headerlink" href="#config" title="Permanent link"> ¶</a></h3>
+<p>Each <code>config</code> parameter is a record with the name of the parameter as the key within the <code>config</code> map with the following keys:</p>
+<p>type (required)
+    Avro type definition, commonly a string such as "int" or "ndarray", but may be a table representing collection types or a record or an array representing a union of types.
+doc (optional)
+    A string description of the <code>config</code> parameter
+default (optional)
+    The default value if the <code>config</code> parameter is omitted in the daemon configuration. If no default is given, it is considered required.</p>
+<p>A daemon may override the default value defined by a trait (or provide one where none was given).
+Additionally, rather then overwriting the doc, a key <code>addendum</code> may be added to provide additional context to the variable
+(e.g. communicating that a parameter is required despite a null default value being defined in the trait).</p>
+<p>For more information on configuration, see <a href="../102">YEP-102</a>.</p>
+<h3 id="state">state<a class="headerlink" href="#state" title="Permanent link"> ¶</a></h3>
+<p>The <code>state</code> is configured exactly the same as <code>config</code>, except that all <code>state</code> variable must have a <code>default</code> value.</p>
+<p>For more information on configuration, see <a href="../103">YEP-103</a>.</p>
+<h3 id="links-installation">links, installation<a class="headerlink" href="#links-installation" title="Permanent link"> ¶</a></h3>
+<p>The links are a map of arbitrary keys to string URLs.
+In general links to documentation, source, and a bugtracker are good to have.
+Additionally links to the manufacturer/library used are common.</p>
+<p>Installation is just like links, except with the specific goal of pointing to installable package references.
+For python, this likely includes a link to PyPI and/or conda-forge.</p>
+<h3 id="hardware">hardware<a class="headerlink" href="#hardware" title="Permanent link"> ¶</a></h3>
+<p>A list of supported hardware, formatted as 'make:model'.
+Supported hardware should also appear in known-hardware on <a href="https://gitlab.com/yaq/yaq-fyi/-/blob/main/known-hardware.toml.">yaq.fyi</a>
+Used only for building documentation.</p>
+<h1 id="rejected-ideas">Rejected Ideas<a class="headerlink" href="#rejected-ideas" title="Permanent link"> ¶</a></h1>
+<ul>
+<li><a href="../100">YEP-100</a> - No schemas, wish to use an existing standard</li>
+</ul>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/11">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

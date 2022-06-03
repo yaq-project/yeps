@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>is-discrete</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/309
+</h1>
+
+<hr>
+
+<h1>
+  is-discrete
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>309</td></tr>
+<tr><th>Title:</th><td>is-discrete</td></tr>
+<tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>trait</td></tr>
+<tr><th>Post-History:</th><td>2020-06-16, 2021-03-23</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP defines the is-discrete trait.
+This trait requires and is closely related to has-position (<a href="https://yeps.yaq.fyi/301/">YEP-301</a>).
+While has-position considers the case of any device with a single settable position, is-discrete considers the subset of devices that have just a few available positions.</p>
+<p>This trait has been accepted.
+See built documentation at at <a href="https://yaq.fyi/traits/is-discrete/">yaq.fyi</a>.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#proposal">Proposal</a><ul>
+<li><a href="#config-identifiers">config: identifiers</a></li>
+<li><a href="#state-postion_identifier">state: postion_identifier</a></li>
+<li><a href="#method-get_position_identifiers">method: get_position_identifiers</a></li>
+<li><a href="#method-set_identifier">method: set_identifier</a></li>
+<li><a href="#method-get_identifier">method: get_identifier</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>Devices with just a few available positions are typically interacted with in slightly different ways than devices with many positions.
+These "discrete" devices typically have a unique name for each position, and setting them using the position names is easier than index.
+For example, a simple digital output pin might have two positions named "high" and "low".
+In contrast, an optical filter wheel might have three filters named "red", "blue", and "orange".</p>
+<p>The is-discrete trait implements a consistent interface for such devices.</p>
+<h1 id="proposal">Proposal<a class="headerlink" href="#proposal" title="Permanent link"> ¶</a></h1>
+<p>The is-discrete trait implements a very simple "identifier" system that lives on top of the position attribute defined by has-position.
+Conceptually, this system can be thought of as a hashtable that has unique strings as keys (the identifiers) and unique numbers as values (the positions).
+Clients may use these identifier strings to directly set the device to the mapped position.
+Furthmore, clients may as the daemon for the current active identifier.</p>
+<p>Since this trait requires has-position, the daemon must also implement all of the features of the has-position trait.
+For example, clients can use the <code>set_position</code> and <code>get_position</code> methods directly.
+Daemons may choose to respond to such methods in device-appropriate ways.
+Certain devices actually can take on intermediate positions, even though certain postions are special and commonly accessed.
+Other devices really do only have the options present in the identifier map, and should likely simply go to the nearest valid position.</p>
+<p>Because certain devices may be able to take on intermediate positions that do not correspond to a valid identifier, clients should be aware that current identifier may be None.</p>
+<h2 id="config-identifiers">config: identifiers<a class="headerlink" href="#config-identifiers" title="Permanent link"> ¶</a></h2>
+<p>type: map with double values</p>
+<p>This provides an in-house way of specifying discrete positions.
+Note that <em>all</em> devices must have a numeric value that the positions map onto. If a particular device does not innately have numeric positions, it is recommended to use something like natural numbers.
+Some devices will have native position identifiers.
+In that case, this config should be ignored and the more standard to that device identifiers should be preferred.
+Daemons must add an addendum saying as much when this is the case.</p>
+<h2 id="state-postion_identifier">state: postion_identifier<a class="headerlink" href="#state-postion_identifier" title="Permanent link"> ¶</a></h2>
+<p>type: string</p>
+<p>Current position identifier.</p>
+<h2 id="method-get_position_identifiers">method: get_position_identifiers<a class="headerlink" href="#method-get_position_identifiers" title="Permanent link"> ¶</a></h2>
+<p>returns: dictionary of {string: number}</p>
+<p>Get position identifiers.
+Identifiers may not change at runtime.</p>
+<h2 id="method-set_identifier">method: set_identifier<a class="headerlink" href="#method-set_identifier" title="Permanent link"> ¶</a></h2>
+<p>arguments: identifier: string</p>
+<p>Set using an identifier.</p>
+<h2 id="method-get_identifier">method: get_identifier<a class="headerlink" href="#method-get_identifier" title="Permanent link"> ¶</a></h2>
+<p>returns: string</p>
+<p>Get current identifier string.
+Current identifier may be None.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/13">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

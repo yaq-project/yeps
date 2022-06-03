@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>is-sensor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/302
+</h1>
+
+<hr>
+
+<h1>
+  is-sensor
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>302</td></tr>
+<tr><th>Title:</th><td>is-sensor</td></tr>
+<tr><th>Authors:</th><td>Blaise Thompson</td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>trait</td></tr>
+<tr><th>Post-History:</th><td>2020-04-22, 2020-07-14, 2021-03-17</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP defines the is-sensor trait.
+Daemons implementing this trait make measurements.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#proposal">Proposal</a><ul>
+<li><a href="#message-get_measured">message: get_measured</a></li>
+<li><a href="#message-get_measurement_id">message: get_measurement_id</a></li>
+<li><a href="#message-get_channel_names">message: get_channel_names</a></li>
+<li><a href="#message-get_channel_shapes">message: get_channel_shapes</a></li>
+<li><a href="#message-get_channel_units">message: get_channel_units</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>Sensors are a core component of the instrumentation ecosystem.
+The is-sensor trait enforces a consistent interface across all measurement devices.</p>
+<h1 id="proposal">Proposal<a class="headerlink" href="#proposal" title="Permanent link"> ¶</a></h1>
+<p>Fundamentally <code>is-sensor</code> daemons expose one or many named channels to clients.
+Each channel may be a scalar or a multidimensional array.
+Each channel may have units.</p>
+<p>In many cases a single sensor daemon exposes a large volume of information over the wire.
+Clients who wish to poll for updates may find it impractical to read out the entire state of the sensor every time.
+For this reason, yaq defines measurement_id, an integer that increments when the channel values are changed.
+A very lightweight message get_measurement_id is offered for clients to poll for updates.
+The measurement_id is also returned alongside channel information when get_measured is called.
+Clients should expect measurement_id to overflow and typically should only watch for changes.</p>
+<p>Many is-sensor daemons also implement the closely related trait has-measure-trigger (<a href="../310">YEP-310</a>).
+Daemons which implement is-sensor without has-measure-trigger are sensors that update "spontaneously" and cannot be software triggered.
+Because this trait has no setters, daemons implementing only this trait should always be busy.</p>
+<h2 id="message-get_measured">message: get_measured<a class="headerlink" href="#message-get_measured" title="Permanent link"> ¶</a></h2>
+<p>response: {type: map, values: [float, ndarray]}</p>
+<p>Returns map of channel_name to measured_value.
+Always returns additional key measurement_id.</p>
+<h2 id="message-get_measurement_id">message: get_measurement_id<a class="headerlink" href="#message-get_measurement_id" title="Permanent link"> ¶</a></h2>
+<p>response: {'type': 'int'}</p>
+<p>Get current measurement_id.
+Clients are encouraged to watch for this to be updated before calling get_measured to get entire measurement.</p>
+<h2 id="message-get_channel_names">message: get_channel_names<a class="headerlink" href="#message-get_channel_names" title="Permanent link"> ¶</a></h2>
+<p>response: {'type': 'array', 'items': 'string'}</p>
+<p>Get map of channel names.</p>
+<h2 id="message-get_channel_shapes">message: get_channel_shapes<a class="headerlink" href="#message-get_channel_shapes" title="Permanent link"> ¶</a></h2>
+<p>response: {'type': 'map', 'values': {'type': 'array', 'items': 'int'}}</p>
+<p>Get map of current channel shapes. Scalar represented by empty list.</p>
+<h2 id="message-get_channel_units">message: get_channel_units<a class="headerlink" href="#message-get_channel_units" title="Permanent link"> ¶</a></h2>
+<p>response: {'type': 'map', 'values': ['null', 'string']}</p>
+<p>Get current channel units.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/15">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

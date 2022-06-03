@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>N-Dimensional Array msgpack Extension Type</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/110
+</h1>
+
+<hr>
+
+<h1>
+  N-Dimensional Array msgpack Extension Type
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>110</td></tr>
+<tr><th>Title:</th><td>N-Dimensional Array msgpack Extension Type</td></tr>
+<tr><th>Authors:</th><td>Kyle Sunden</td></tr>
+<tr><th>Status:</th><td>rejected</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2020-04-14, 2020-04-21, 2020-07-02, 2020-07-05, 2020-12-09</td></tr>
+</table>
+
+
+<h1 id="superseded">Superseded<a class="headerlink" href="#superseded" title="Permanent link"> ¶</a></h1>
+<p>This YEP is now superseded by <a href="../113">YEP-113</a>.
+The yaq ecosystem no longer uses this msgpack based custom RPC and uses <a href="https://avro.apache.org">Apache Avro</a></p>
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP describes a <a href="https://msgpack.org">msgpack</a> extension type suitable for N-Dimensional homogeneous arrays.
+This uses a subset of the <a href="https://docs.scipy.org/doc/numpy/reference/arrays.interface.html">Numpy Array Interface</a>, with msgpack for serialization.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#superseded">Superseded</a></li>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a><ul>
+<li><a href="#msgpack-header">msgpack header</a></li>
+<li><a href="#array-interface-contents">Array Interface contents</a></li>
+<li><a href="#size-consideration">Size consideration</a></li>
+</ul>
+</li>
+<li><a href="#backwards-compatibility">Backwards Compatibility</a></li>
+<li><a href="#reference-implementation">Reference Implementation</a></li>
+<li><a href="#rejected-ideas">Rejected Ideas</a><ul>
+<li><a href="#using-msgpack-arrays">Using msgpack arrays</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>Msgpack provides a much more compact serialization for numeric types compared to JSON.
+However, msgpack arrays are heterogeneous, and thus each element must specify its datatype.
+For large arrays, this is potentially expensive, both in terms of serialization time and transport bandwidth.
+For large, potentially high dimensional, homogeneous arrays, the type information can be specified once and the data simply transmitted in native C-style contiguous form.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<h2 id="msgpack-header">msgpack header<a class="headerlink" href="#msgpack-header" title="Permanent link"> ¶</a></h2>
+<p>The type specification uses the integer value 110 (0x6e, ASCII 'n').</p>
+<pre><code>ext 8 stores an integer and a byte array whose length is upto (2^8)-1 bytes:
++--------+--------+-------+~~~~~~~~+
+|  0xc7  |XXXXXXXX|  110  |  data  |
++--------+--------+-------+~~~~~~~~+
+
+ext 16 stores an integer and a byte array whose length is upto (2^16)-1 bytes:
++--------+--------+--------+-------+~~~~~~~~+
+|  0xc8  |YYYYYYYY|YYYYYYYY|  110  |  data  |
++--------+--------+--------+-------+~~~~~~~~+
+
+ext 32 stores an integer and a byte array whose length is upto (2^32)-1 bytes:
++--------+--------+--------+--------+--------+-------+~~~~~~~~+
+|  0xc9  |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|  110  |  data  |
++--------+--------+--------+--------+--------+-------+~~~~~~~~+
+</code></pre>
+<p>where
+* <code>XXXXXXXX</code> is a 8-bit unsigned integer which represents <code>N</code>
+* <code>YYYYYYYY_YYYYYYYY</code> is a 16-bit big-endian unsigned integer which represents <code>N</code>
+* <code>ZZZZZZZZ_ZZZZZZZZ_ZZZZZZZZ_ZZZZZZZZ</code> is a big-endian 32-bit unsigned integer which represents <code>N</code>
+* <code>N</code> is a length of <code>data</code>
+* <code>data</code> is a msgpack formatted Map as described below</p>
+<h2 id="array-interface-contents">Array Interface contents<a class="headerlink" href="#array-interface-contents" title="Permanent link"> ¶</a></h2>
+<p>This describes the subset of version 3 of the <a href="https://docs.scipy.org/doc/numpy/reference/arrays.interface.html">Numpy Array Interface</a> which is required.</p>
+<p>The Map has four required keys: (<code>shape</code>, <code>typestr</code>, <code>data</code>, <code>version</code>):</p>
+<p><code>shape</code>: Tuple whose elements are the array size in each dimension. Each entry is an integer.</p>
+<p><code>typestr</code>: A string providing the basic type of the homogeneous array The basic string format consists of 3 parts: a character describing the byteorder of the data (&lt;: little-endian, &gt;: big-endian, |: not-relevant), a character code giving the basic type of the array, and an integer providing the number of bytes the type uses.
+The basic types supported by this protocol are a subset of those supported by Numpy.
+These are chosen to maximize compatibility without relying on Python/Numpy specific behavior.</p>
+<ul>
+<li><code>b</code>: Boolean (integer with only True and False values)</li>
+<li><code>i</code>: Integer</li>
+<li><code>u</code>: Unsigned Integer</li>
+<li><code>f</code>: Floating Point</li>
+<li><code>c</code>: Complex Floating Point</li>
+</ul>
+<p><code>data</code>: C-style (row-major) contiguous <em>bytes</em> representing the contents of the array. (This differs from the Numpy specification, as it needs to be transmitted over the RPC, and is also therefore required)</p>
+<p><code>version</code>: An integer showing the version of the interface (i.e. 3 for this version). Be careful not to use this to invalidate objects exposing future versions of the interface.</p>
+<p>Other parts of the Numpy specification (including both the optional fields and other datatypes) are explicitly NOT included in this specification.
+They are deemed to be too specific to Numpy/Python to be confident in that the representations translate seamlessly in other potential implementations.
+As such, parsers MAY utilize these fields if provided, but are NOT REQUIRED to do so.
+Given that, sending of these additional fields is STRONGLY discouraged, and may result in improper data transfer.</p>
+<h2 id="size-consideration">Size consideration<a class="headerlink" href="#size-consideration" title="Permanent link"> ¶</a></h2>
+<p>This packing incurs ~50 bytes of overhead (regardless of the size of the array).
+(The exact cost is not completely fixed, as it depends on the number of dimensions and the efficiency of representing the shape in msgpack native int types)
+As such, this is less efficient serialization than msgpack native arrays for arrays &lt;~40 members.
+However, since this cost is (relatively) fixed, large arrays do not grow as quickly.</p>
+<h1 id="backwards-compatibility">Backwards Compatibility<a class="headerlink" href="#backwards-compatibility" title="Permanent link"> ¶</a></h1>
+<p>This only extends capability, though requires both client and daemon to implement parsing and packing in this format.</p>
+<h1 id="reference-implementation">Reference Implementation<a class="headerlink" href="#reference-implementation" title="Permanent link"> ¶</a></h1>
+<pre><code>import msgpack
+
+class ArrayInterface:
+    def __init__(self, array_interface):
+        array_interface[&quot;shape&quot;] = tuple(array_interface[&quot;shape&quot;])
+        self.__array_interface__ = array_interface
+
+
+def pack_ndarray(ndarray):
+    interface = ndarray.__array_interface__
+    if &quot;strides&quot; in interface:
+        if interface[&quot;strides&quot;] is not None:
+            raise PackException(
+                &quot;Strided array attempted to pack, please pack as C-Contiguous&quot;
+            )
+        del interface[&quot;strides&quot;]
+    if &quot;descr&quot; in interface and len(interface[&quot;descr&quot;]) == 1:
+        del interface[&quot;descr&quot;]
+    interface[&quot;data&quot;] = ndarray.tobytes()
+    ser = packb_(interface)
+    return ExtType(110, ser)
+
+
+def ext_hook(code, data):
+    if code == 110:
+        interface = ArrayInterface(unpackb_(data))
+        if &quot;numpy&quot; in sys.modules:
+            import numpy as np
+
+            return np.array(interface)
+        return interface
+
+    return ExtType(code, data)
+</code></pre>
+<h1 id="rejected-ideas">Rejected Ideas<a class="headerlink" href="#rejected-ideas" title="Permanent link"> ¶</a></h1>
+<h2 id="using-msgpack-arrays">Using msgpack arrays<a class="headerlink" href="#using-msgpack-arrays" title="Permanent link"> ¶</a></h2>
+<p>These were deemed verbose due to each element needing to specify its type.
+For large arrays, this is a fair amount of more data.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/6">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the
+CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

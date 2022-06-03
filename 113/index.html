@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>N-Dimensional Array Avro Named Type</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/113
+</h1>
+
+<hr>
+
+<h1>
+  N-Dimensional Array Avro Named Type
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>113</td></tr>
+<tr><th>Title:</th><td>N-Dimensional Array Avro Named Type</td></tr>
+<tr><th>Authors:</th><td>Kyle Sunden</td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2020-12-09, 2020-12-21</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP describes an <a href="https://avro.apache.org/docs/current/spec.html">Avro</a> record type suitable for N-Dimensional homogeneous arrays.
+This uses a subset of the <a href="https://docs.scipy.org/doc/numpy/reference/arrays.interface.html">Numpy Array Interface</a>, with Avro for serialization.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a><ul>
+<li><a href="#array-interface-contents">Array Interface contents</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>For large, potentially high dimensional, homogeneous arrays, the type information can be specified once and the data simply transmitted in native C-style contiguous form.
+The Array Interface provides an easy and portable way of specifying homogeneous arrays, including of types not natively supported by Avro itself (e.g. complex numeric).
+<a href="../110">YEP-110</a> was a similar definition for when yaq used msgpack instead of Avro.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<p>The ndarray type uses the following schema definition:</p>
+<pre><code>{
+    &quot;name&quot;: &quot;ndarray&quot;,
+    &quot;type&quot;: &quot;record&quot;,
+    &quot;logicalType&quot;: &quot;ndarray&quot;,
+    fields&quot;: [
+       {
+      &quot;name&quot;: &quot;shape&quot;,
+      &quot;type&quot;: {
+         &quot;items&quot;: &quot;int&quot;,
+         &quot;type&quot;: &quot;array&quot;
+      }
+       },
+       {
+      &quot;name&quot;: &quot;typestr&quot;,
+      &quot;type&quot;: &quot;string&quot;
+       },
+       {
+      &quot;name&quot;: &quot;data&quot;,
+      &quot;type&quot;: &quot;bytes&quot;
+       },
+       {
+      &quot;name&quot;: &quot;version&quot;,
+      &quot;type&quot;: &quot;int&quot;
+       }
+    ]
+}
+</code></pre>
+<h2 id="array-interface-contents">Array Interface contents<a class="headerlink" href="#array-interface-contents" title="Permanent link"> ¶</a></h2>
+<p>This describes the subset of version 3 of the <a href="https://docs.scipy.org/doc/numpy/reference/arrays.interface.html">Numpy Array Interface</a> which is required.</p>
+<p>The record has four required keys: (<code>shape</code>, <code>typestr</code>, <code>data</code>, <code>version</code>):</p>
+<p><code>shape</code>: Tuple whose elements are the array size in each dimension. Each entry is an integer.</p>
+<p><code>typestr</code>: A string providing the basic type of the homogeneous array The basic string format consists of 3 parts: a character describing the byteorder of the data (&lt;: little-endian, &gt;: big-endian, |: not-relevant), a character code giving the basic type of the array, and an integer providing the number of bytes the type uses.
+The basic types supported by this protocol are a subset of those supported by Numpy.
+These are chosen to maximize compatibility without relying on Python/Numpy specific behavior.</p>
+<ul>
+<li><code>b</code>: Boolean (integer with only True and False values)</li>
+<li><code>i</code>: Integer</li>
+<li><code>u</code>: Unsigned Integer</li>
+<li><code>f</code>: Floating Point</li>
+<li><code>c</code>: Complex Floating Point</li>
+</ul>
+<p><code>data</code>: C-style (row-major) contiguous <em>bytes</em> representing the contents of the array. (This differs from the Numpy specification, as it needs to be transmitted over the RPC, and is also therefore required)</p>
+<p><code>version</code>: An integer showing the version of the interface (i.e. 3 for this version). Be careful not to use this to invalidate objects exposing future versions of the interface.</p>
+<p>Other parts of the Numpy specification (including both the optional fields and other datatypes) are explicitly NOT included in this specification.
+They are deemed to be too specific to Numpy/Python to be confident in that the representations translate seamlessly in other potential implementations.
+As such, parsers MAY implement other datatypes if provided, but are NOT REQUIRED to do so.
+Given that, sending of datatypes not specified here is STRONGLY discouraged, and may result in improper data transfer.</p>
+<p>Implementations are encouraged to automatically return language-native ndarray objects rather than returning the dictionary representing the map as transmitted.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/27">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the
+CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

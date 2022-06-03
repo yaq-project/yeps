@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>has-turret</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/304
+</h1>
+
+<hr>
+
+<h1>
+  has-turret
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>304</td></tr>
+<tr><th>Title:</th><td>has-turret</td></tr>
+<tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>trait</td></tr>
+<tr><th>Post-History:</th><td>2020-04-22, 2020-07-14, 2021-03-17</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP defines the has-turret trait.</p>
+<p>This trait has been accepted.
+See built documentation at at <a href="https://yaq.fyi/traits/has-turret">yaq.fyi</a>.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#proposal">Proposal</a><ul>
+<li><a href="#state-turret">state: turret</a></li>
+<li><a href="#message-get_turret">message: get_turret</a></li>
+<li><a href="#message-get_turret_options">message: get_turret_options</a></li>
+<li><a href="#message-set_turret">message: set_turret</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>Certain positional hardware has an additional turret.
+This trait ensures consistent interfaces for such hardware across the yaq ecosystem.</p>
+<h1 id="proposal">Proposal<a class="headerlink" href="#proposal" title="Permanent link"> ¶</a></h1>
+<p>Turret position is represented using a string identifier.
+Daemons should return busy while turret position is changing.</p>
+<h2 id="state-turret">state: turret<a class="headerlink" href="#state-turret" title="Permanent link"> ¶</a></h2>
+<p>type: string or null</p>
+<h2 id="message-get_turret">message: get_turret<a class="headerlink" href="#message-get_turret" title="Permanent link"> ¶</a></h2>
+<p>response: string or null</p>
+<p>Get current turret identifier.</p>
+<h2 id="message-get_turret_options">message: get_turret_options<a class="headerlink" href="#message-get_turret_options" title="Permanent link"> ¶</a></h2>
+<p>response: list of string</p>
+<p>Get current turret identifier options.</p>
+<h2 id="message-set_turret">message: set_turret<a class="headerlink" href="#message-set_turret" title="Permanent link"> ¶</a></h2>
+<p>parameter: turret: string</p>
+<p>Set the turret to a given identifier.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/21">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>Buses</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/112
+</h1>
+
+<hr>
+
+<h1>
+  Buses
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>112</td></tr>
+<tr><th>Title:</th><td>Buses</td></tr>
+<tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
+<tr><th>Status:</th><td>draft</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2020-11-24</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>Sometimes multiple daemons share a single physical interface (a single <a href="https://en.wikipedia.org/wiki/Bus_%28computing%29">bus</a>).
+This shared interface may not be safe for use by multiple applications.
+Therefore it is sometimes necessary to force a collection of daemons to run together in a single process so flow control can be handled correctly by yaq.
+This YEP defines such a system.</p>
+<p>PLEASE NOTE! While this YEP might be a good idea, yaq developers have decided to leave it as a draft for the time being.
+We have not, to our knowledge, encountered a concrete example where this bus system is necessary.
+We assume that such hardware will come to us at some point, and we will implement and finalize this YEP at that time.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a><ul>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#launching">Launching</a></li>
+</ul>
+</li>
+<li><a href="#rejected-ideas">Rejected Ideas</a></li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>As a design guideline, yaq encourages the development of ultra-portable, single purpose daemons that interface with single components.
+For complex hardware, this often means that multiple daemons are written---each to control a particular component.
+This guideline makes individual yaq interfaces simpler and more trait-compliant, easing client development.
+However, this also introduces a technical challenge: how to run multiple daemons using the same physical bus without collisions?</p>
+<p>As a concrete example, consider Newport's <a href="https://www.newport.com/p/SMC100CC">SMC100CC motor controller</a>.
+These controllers can be <a href="https://en.wikipedia.org/wiki/Daisy_chain_(electrical_engineering)">daisy-chained</a> together to create a network of motors that are controlled via a single RS232 bus.
+This RS232 bus has no automatic flow control.
+In fact, Windows only allows one application to occupy a given COM port.
+In yaq the natural approach would be to have one daemon per motor.
+Different kinds of motors can be used within the same network, so a heterogeneous collection of daemons must somehow run within one process.</p>
+<p><a href="https://yeps.yaq.fyi/104">YEP-104</a> defines standard entry points for running yaq daemons.
+In this standard, all daemons of a given kind share a single entry point and are therefore launched together.
+As an implementation detail, daemons of the same kind CAN be run within one process, although this is not guaranteed.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<p>In yaq, buses are special named entry points starting with <code>yaqd-bus</code>.
+Individual daemons can register to be run by a specific bus manager in configuration.
+There can be multiple bus kinds.</p>
+<p>The bus system is completely optional.
+Daemons are not required to participate in buses.</p>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link"> ¶</a></h2>
+<p>Daemons should define a key <code>yaqd-bus-&lt;bus-kind&gt;</code> mapping to a string of an arbitrary name.
+These configuration options MUST appear in the protocol with default <code>none</code>.
+All daemons mapping the same <code>bus-kind</code> to the same <code>bus-name</code> will run together in a single process.</p>
+<h2 id="launching">Launching<a class="headerlink" href="#launching" title="Permanent link"> ¶</a></h2>
+<p><code>yaqd-bus-&lt;bus-kind&gt; &lt;name&gt;</code>.
+This will launch all of the daemons with matching configuration.
+The bus entry point scans the configuration directory recursively looking for such daemons.
+An alternative configuration directory can be provided with a flag.
+If no daemons are found the bus should exit with an error.</p>
+<h1 id="rejected-ideas">Rejected Ideas<a class="headerlink" href="#rejected-ideas" title="Permanent link"> ¶</a></h1>
+<p>Abstracting away bus interfaces as RPC layers.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/26">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

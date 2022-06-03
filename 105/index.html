@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>Daemon Versioning</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/105
+</h1>
+
+<hr>
+
+<h1>
+  Daemon Versioning
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>105</td></tr>
+<tr><th>Title:</th><td>Daemon Versioning</td></tr>
+<tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
+<tr><th>Status:</th><td>rejected</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2020-05-13, 2020-07-02</td></tr>
+</table>
+
+
+<h1 id="rejection">Rejection<a class="headerlink" href="#rejection" title="Permanent link"> ¶</a></h1>
+<p>As part of the <a href="../107">YEP-107</a> Avro implementation, daemon protocols are fully specified, and leave little to no benefit gained by requiring tracking of individual daemon versions.</p>
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP enforces <a href="https://semver.org/">semantic versioning</a> for yaq daemons.</p>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>Since yaq is built in a modular way, a typical instrument will rely on many daemons.
+It is important that client developers have a standard way of recognizing which version of each daemon is installed.
+Ideally the version information would be semantic: the version string will convey meaning about what has been modified from one version to the next.
+<a href="https://semver.org/">Semantic versioning</a> is the de-facto standard, and this YEP applies this standard to the yaq ecosystem.</p>
+<p>For convenience, yaq daemons are often distributed together in a single package.
+Often, the package itself will need to have its own version string.
+Importantly, this YEP does not specify anything about the package versioning strategy.
+Typically, the daemon versions will not track the package versions, nor will the daemon versions be the same for multiple daemons in the same package.
+Many yaq packages use date-based versioning.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#rejection">Rejection</a></li>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#specification">Specification</a></li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<p>Each yaq daemon SHALL expose a yaq-rpc method <code>get_version</code>.
+This method SHALL NOT accept any arguments.
+This method SHALL return a string compliant with <a href="https://semver.org/spec/v2.0.0.html">semantic versioning spec 2.0.0</a>.
+Refer to the semantic versioning spec for full information.</p>
+<p>Briefly, yaq daemon versions shall have the format <code>MAJOR.MINOR.PATCH</code>.
+Any backwards-incompatible changes (that is, any update which may require yaq-rpc client changes) SHALL increment the <code>MAJOR</code> part of the version.
+Version metadata MAY be appended using a <code>+</code>.
+For example, it's typical to indicate that the git version is being used, e.g. '1.2.3+git`.</p>
+<p>yaq daemon versions SHOULD reach 1.0.0 as soon as reasonable.
+<a href="https://0ver.org/">Zero-based versioning</a> results in a less semantically meaningful ecosystem.
+Typically, a yaq daemon SHOULD reach 1.0.0 as soon as it is put into everyday use on one or more instruments.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/9">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

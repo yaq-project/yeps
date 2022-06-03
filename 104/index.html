@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>Daemon Entry Points</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/104
+</h1>
+
+<hr>
+
+<h1>
+  Daemon Entry Points
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>104</td></tr>
+<tr><th>Title:</th><td>Daemon Entry Points</td></tr>
+<tr><th>Authors:</th><td>Kyle Sunden</td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2020-04-14, 2020-04-22, 2020-07-02</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP defines the standard for entry points for yaq daemons.
+The entry point executable name is defined as <code>yaqd-&lt;kind&gt;</code> where <code>&lt;kind&gt;</code> is a lower case name for the daemon with words separated by hyphens.
+Additionally, this defines flags required on the entry points.
+There is a 1-to-1 correspondence between entry point invocations and <a href="../102">YEP-102</a> configuration files.
+As such, multiple daemons MAY be started in a single entry point.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a></li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>A standard for names and options available makes for a consistent, easy to swap out way of initiating daemons.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<p>The standard entry point to initiate a daemon SHALL be <code>yaqd-&lt;kind&gt;</code> where <code>&lt;kind&gt;</code> is a lowercase name for the daemon with words separated by hyphens, as returned by the <code>id</code> method of the daemon.</p>
+<p>Examples of valid entry points include <code>yaqd-hardware</code>, <code>yaqd-micro-hr</code> , and <code>yaqd-zaber-binary</code>.</p>
+<p>The entry point SHALL accept the option <code>--help</code> and the short form <code>-h</code> of this option, which prints usage information and exts without starting daemons.</p>
+<p>The entry point SHALL accept the option <code>--config &lt;filepath&gt;</code> and the short form <code>-c</code> of this option.
+Each daemon specified by the config file SHALL be started.
+They MAY (and for technical reasons must in some cases) be served from the same process.</p>
+<p>The entry point SHALL accept the option <code>--version</code> which prints version information, and exits without starting daemons.
+The version of the implementation package (in whatever language) MUST be included.
+Relevant versions such as core implementation and language MAY be included.
+Each MUST be clearly identified.</p>
+<p>The entry point SHALL accept the option <code>--log-level &lt;level&gt;</code> and the short form <code>-l</code> which sets the filter level of the log entries. The log level is the lower case name as defined in <a href="../106">YEP-106</a>.</p>
+<p>The entry point SHALL accept the option <code>--verbose</code> and the short form <code>-v</code>, which is equivalent to <code>--log-level debug</code>, as defined in <a href="../106">YEP-106</a>.</p>
+<p>The entry point SHALL accept the option <code>--protocol</code> which prints the <a href="../107">YEP-107</a> Avro protocol json.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/5">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the
+CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

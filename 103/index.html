@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>Daemon State Files</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/103
+</h1>
+
+<hr>
+
+<h1>
+  Daemon State Files
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>103</td></tr>
+<tr><th>Title:</th><td>Daemon State Files</td></tr>
+<tr><th>Authors:</th><td>Kyle Sunden</td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2020-04-14, 2020-07-02, 2021-01-15</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP describes the configuration file format for yaq daemons.
+This is a TOML file, with some traits defining required keys.
+The TOML file contains dynamic information needed to properly restart a daemon.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a><ul>
+<li><a href="#file-location">File Location</a></li>
+<li><a href="#access-via-clients">Access Via Clients</a></li>
+<li><a href="#fields-required-by-traits">Fields Required By Traits</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>This TOML format provides an easy, general place to store daemon state which is robust from shutdown/restart cycles.
+This format is human readable, and therefore verifiable/editable if needed.
+However, it is NOT expected that human intervention is an expected course of normal usage.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<p>The state file is a <a href="https://github.com/toml-lang/toml">TOML</a> file.
+Dynamic fields, either of infrequent (but possible) use to clients or required for restarting the daemon,may be saved in the state TOML.</p>
+<p>If possible, recorded state SHOULD fully describe the hardware such that recovery from a shutdown (including unexpected shutdown) will be seamless without any additional user input.
+If the file is not present, reasonable default behavior SHOULD be assumed, if possible.
+Defaults are specified in the daemon's <a href="../107">protocol</a>.
+When reasonable defaults are not possible, Daemons SHOULD return Error states over <a href="../107">RPC</a> calls for calls which require state information.
+A missing file MUST NOT cause the daemon to fail to start up and accept client connections.</p>
+<p>Because yaq uses a simple text file to store state, it's not recommended to treat the state file as an active datastore.
+Daemons SHOULD use the state file as a periodically-written backup.
+Active state information will typically be kept in-memory.
+In most cases, the content of a state file will only be read by the daemon at startup.</p>
+<h2 id="file-location">File Location<a class="headerlink" href="#file-location" title="Permanent link"> ¶</a></h2>
+<p>EACH daemon MUST SAVE a file at (unless that file is empty, in which case it MAY be omitted):</p>
+<ul>
+<li>macOS: <code>~/Library/Application Support/yaqd-state/&lt;kind&gt;/&lt;name&gt;-state.toml</code></li>
+<li>XDG Spec (e.g. Linux): <code>$XDG_DATA_DIR/yaqd-state/&lt;kind&gt;/&lt;name&gt;-state.toml</code></li>
+<li>Windows: <code>C:\Users\&lt;User&gt;\AppData\Local\yaq\yaqd-state\&lt;kind&gt;\&lt;name&gt;-state.toml</code></li>
+</ul>
+<p>Where <code>&lt;kind&gt;</code> is a lowercase name for the daemon with words separated by hyphens and <code>&lt;name&gt;</code> is the name of the individual daemon.</p>
+<h2 id="access-via-clients">Access Via Clients<a class="headerlink" href="#access-via-clients" title="Permanent link"> ¶</a></h2>
+<p>Clients may access the information in the state file via the <code>get_state</code> method in the <a href="https://yaq.fyi/traits/is-daemon/"><code>is-daemon</code> trait</a>, returned as the TOML contents of the state file.</p>
+<p>As such the <code>get_state</code> method MUST return only information that is valid TOML types: Boolean, Integer, Float, String, RFC 3339 timestamps, Arrays and Tables.</p>
+<p>In general, use of <code>get_state</code> for normal operation (i.e. not debugging) is discouraged.</p>
+<h2 id="fields-required-by-traits">Fields Required By Traits<a class="headerlink" href="#fields-required-by-traits" title="Permanent link"> ¶</a></h2>
+<p>There are no keys required by default, however Traits or individual daemons MAY require State variables.
+All such keys will be listed in the daemon <a href="../107">Avro protocol</a>.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/4">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the
+CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

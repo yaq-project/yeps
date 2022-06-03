@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>Daemon Configuration Files</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/102
+</h1>
+
+<hr>
+
+<h1>
+  Daemon Configuration Files
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>102</td></tr>
+<tr><th>Title:</th><td>Daemon Configuration Files</td></tr>
+<tr><th>Authors:</th><td>Kyle Sunden</td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2020-04-14, 2020-07-02</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP describes the configuration file format for yaq daemons.
+This is a TOML file with some reserved and required keys.
+A single config file has a 1-to-1 relationship with an invocation of the <a href="../104">entry point</a>.
+This MAY be a 1-to-many relationship with individual daemons.
+Typically, there is ONE configuration per <code>&lt;kind&gt;</code> of daemon.
+For example, if you have multiple of the <em>same</em> make and model translation stage, you can configure <em>all</em> of them in a single configuration file.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a><ul>
+<li><a href="#file-location">File Location</a></li>
+<li><a href="#shared-settings">Shared Settings</a></li>
+<li><a href="#individual-daemon-configuration">Individual Daemon Configuration</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>A standard for configuration makes it easy to know how one configures their daemon.
+TOML is a well defined, human readable configuration file format.
+This provides a flexible configuration format, including the ability to share settings across multiple daemons.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<p>The configuration file is a <a href="https://github.com/toml-lang/toml">TOML</a> file.</p>
+<h2 id="file-location">File Location<a class="headerlink" href="#file-location" title="Permanent link"> ¶</a></h2>
+<p>The default configuration file location SHALL be:</p>
+<ul>
+<li>macOS: <code>~/Library/Application Support/yaqd/&lt;kind&gt;/config.toml</code></li>
+<li>XDG Spec (e.g. Linux): <code>$XDG_CONFIG_HOME/yaqd/&lt;kind&gt;/config.toml</code></li>
+<li>Windows: <code>C:\Users\&lt;User&gt;\AppData\Local\yaq\yaqd\&lt;kind&gt;\config.toml</code></li>
+</ul>
+<p>Where <code>&lt;kind&gt;</code> is a lowercase name for the daemon with words separated by hyphens, as returned by the <code>id</code> method.
+<code>&lt;kind&gt;</code> SHOULD NOT begin with "yaq".</p>
+<p>If the desired config file is located elsewhere, it MUST be explicitly provided.</p>
+<h2 id="shared-settings">Shared Settings<a class="headerlink" href="#shared-settings" title="Permanent link"> ¶</a></h2>
+<p>An optional top level table, <code>shared-settings</code>, which (if present) provides defaults that apply to all other tables.
+These defaults are higher priority than protocol defined defaults, but lower than configuration for individual daemon ports.</p>
+<h2 id="individual-daemon-configuration">Individual Daemon Configuration<a class="headerlink" href="#individual-daemon-configuration" title="Permanent link"> ¶</a></h2>
+<p>Every other top-level key MUST be a table, for which the name indicates the name of the daemon which MUST be exposed on the given port. These names MUST be unique at the level of <code>&lt;kind&gt;</code>.</p>
+<p>The keys which are expected for a given daemon are specified using the Avro protocol file as described in <a href="../107">YEP-107</a>.</p>
+<p>Each table MUST include a key <code>port</code> which provides the globally-unique (among all daemons) TCP port.
+Additional fields MAY be added, as needed for configuring the daemon.
+Keys which are required (or optional) MAY be specified by the daemon <a href="../107">protocol</a>.</p>
+<p>ALL tables other than those that are disabled, and <code>shared-settings</code> MUST be started when invoking a daemon entry point with the config file.
+They MAY (and in many cases must for technical reasons) start several daemons listening in the same process.
+A special key, <code>enable</code> (defaults to <code>true</code>) allows you to selectively turn off individual daemons.</p>
+<p>The configuration file MUST NOT be written by the daemon.
+Any runtime dynamic fields SHOULD be written in the <a href="../103">state file</a> and have ways of detecting and/or expose setting over the TCP communication protocol described above.</p>
+<p>Additional identifying information SHOULD be included, as applicable.
+Common identifying information include: <code>make</code> (manufacturer), <code>model</code> (identifies the kind as described by the manufacturer), <code>serial</code> (individual serial number of the device represented).</p>
+<p>The configuration file MUST be read from the file at daemon startup ONLY (restarting is considered "startup", and MUST re-read the configuration file in case changes were made).</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/3">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the
+CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

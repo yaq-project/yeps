@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>has-limits</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/303
+</h1>
+
+<hr>
+
+<h1>
+  has-limits
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>303</td></tr>
+<tr><th>Title:</th><td>has-limits</td></tr>
+<tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>trait</td></tr>
+<tr><th>Post-History:</th><td>2020-04-22, 2020-07-14</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP defines the has-limits trait.</p>
+<p>This trait has been accepted.
+See built documentation at at <a href="https://yaq.fyi/traits/has-limits">yaq.fyi</a>.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#proposal">Proposal</a><ul>
+<li><a href="#config-limits">config: limits</a></li>
+<li><a href="#config-out_of_limits">config: out_of_limits</a></li>
+<li><a href="#state-hw_limits">state: hw_limits</a></li>
+<li><a href="#message-get_limits">message: get_limits</a></li>
+<li><a href="#messages-in_limits">messages: in_limits</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>A subset of positional hardware has exactly two limits.
+This trait standardies the interface to such hardware.</p>
+<p>This trait requires has-position, see <a href="https://yeps.yaq.fyi/301/">YEP-301</a>.</p>
+<h1 id="proposal">Proposal<a class="headerlink" href="#proposal" title="Permanent link"> ¶</a></h1>
+<h2 id="config-limits">config: limits<a class="headerlink" href="#config-limits" title="Permanent link"> ¶</a></h2>
+<p>type: array</p>
+<p>default: [-inf, inf]</p>
+<p>Configuration limits are strictly optional.</p>
+<h2 id="config-out_of_limits">config: out_of_limits<a class="headerlink" href="#config-out_of_limits" title="Permanent link"> ¶</a></h2>
+<p>type: enum</p>
+<p>default: closest</p>
+<p>Control behavior of daemon when set_position is given a value outside of limits.</p>
+<h2 id="state-hw_limits">state: hw_limits<a class="headerlink" href="#state-hw_limits" title="Permanent link"> ¶</a></h2>
+<p>type: array</p>
+<h2 id="message-get_limits">message: get_limits<a class="headerlink" href="#message-get_limits" title="Permanent link"> ¶</a></h2>
+<p>response: {'type': 'array', 'items': 'float'}</p>
+<p>Get daemon limits.Limits will be the intersection of config limits and driver limits (when applicable).</p>
+<h2 id="messages-in_limits">messages: in_limits<a class="headerlink" href="#messages-in_limits" title="Permanent link"> ¶</a></h2>
+<p>parameters: position: float</p>
+<p>response: boolean</p>
+<p>Check if a given position is within daemon limits.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/16">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

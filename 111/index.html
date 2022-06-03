@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>Fields</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/111
+</h1>
+
+<hr>
+
+<h1>
+  Fields
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>111</td></tr>
+<tr><th>Title:</th><td>Fields</td></tr>
+<tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
+<tr><th>Status:</th><td>draft</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2020-09-27</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP describes a "fields" system for the yaq ecosystem.
+Using fields, yaq daemons provide suggestions for how clients might best display the daemon's state to users.
+Fields are especially useful when automatically building graphical user interfaces.
+Fields are inspired by Bluesky, which has a system of <a href="http://nsls-ii.github.io/bluesky/metadata.html">fields</a> and <a href="http://nsls-ii.github.io/bluesky/callbacks.html#hints">hints</a>.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a><ul>
+<li><a href="#the-field-record">The Field Record</a></li>
+<li><a href="#fields-and-traits">Fields and Traits</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>When interacting with hardware via "rich" graphical clients, users typically expect to be presented with a set of <a href="https://en.wikipedia.org/wiki/Field_(computer_science)">fields</a>.
+For example, a simple motor might have the field "position" and the field "velocity".
+Users might expect a graphical client to display the current value of each of these fields and allow setting their value, where possible.</p>
+<p>Using Avro-RPC (see <a href="https://yeps.yaq.fyi/107">YEP-107</a>), yaq daemons completely specify their client interface.
+A client knows the exact signature of every message that the daemon supports.
+In addition, yaq has a traits system which defines preferred message syntax for common behaviors.
+Client developers may use the traits system to safely build user interfaces.
+Despite these tools, the relationship between message protocols and logical "fields" of the daemon is often not obvious.
+Because individual daemons are allowed to specify arbitrary messages beyond those implied by traits, it can be a challenge to automatically discover the relevant fields for an arbitrary daemon.</p>
+<p>A typical graphical client needs to know the following:</p>
+<ul>
+<li>what informational fields should be displayed?</li>
+<li>which fields can be set, and which are read-only?</li>
+<li>what messages are used to read and write a given field?</li>
+<li>which read-only fields are dynamic?</li>
+<li>which fields are primary and which are secondary?</li>
+</ul>
+<p>Here "field" is a single piece of information about a daemon, things like "current position", "integration time", and "averaging method".
+This YEP allows daemons to help connected clients by specifying relevant fields in a standardized way.
+While the primary purpose of fields is automatic user-interface generation, fields may also be useful when choosing what (meta)data to record from each daemon in the context of an experiment.</p>
+<p>Fields exist on-top-of and do not modify or define the Avro-RPC protocol itself.
+Clients may ignore fields without penalty.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<h2 id="the-field-record">The Field Record<a class="headerlink" href="#the-field-record" title="Permanent link"> ¶</a></h2>
+<p>Fields appear under the <code>fields</code> key of every protocol provided by yaq daemons.
+This key maps to a <code>string: record</code> mapping where the string key is the field name and the record matches the following:</p>
+<pre><code>{
+  &quot;type&quot;: &quot;record&quot;,
+  &quot;name&quot;: &quot;field&quot;,
+  &quot;fields&quot;: [
+    {&quot;name&quot;: &quot;getter&quot;, &quot;type&quot;: &quot;string&quot;},
+    {&quot;name&quot;: &quot;setter&quot;, &quot;type&quot;: [&quot;null&quot;, &quot;string&quot;], &quot;default&quot;: &quot;null&quot;},
+    {&quot;name&quot;: &quot;dynamic&quot;, &quot;type&quot;: &quot;boolean&quot;, &quot;default&quot;: true},
+    {&quot;name&quot;: &quot;kind&quot;, &quot;type&quot;: &quot;enum&quot;, &quot;symbols&quot;: [&quot;normal&quot;, &quot;hinted&quot;]},
+    {&quot;name&quot;: &quot;type&quot;, &quot;type&quot;: &quot;string&quot;}
+}
+</code></pre>
+<p>The strings <code>getter</code> and <code>setter</code> are the message names used to get and set that field.
+The <code>getter</code> message must accept no required arguments and must return exactly the type specified.
+Every field must have a <code>getter</code>.
+The <code>setter</code> message must accept exactly one required argument of the type specified.
+If a field does not have a <code>setter</code> it is assumed read-only.</p>
+<p><code>dyanamic</code> indicates whether a read-only field's value can change while the daemon is running.
+Any field with a <code>setter</code> is assumed to be dynamic.
+<code>dynamic</code> is default true, so any field that does not provide the dynamic key will be assumed to be dynamic.
+A client that encounters a field with <code>dynamic</code> equal to <code>false</code> may call the getter only once, caching the response.
+In cases where a daemon kicks a client and reconnects, the client should refresh all fields.</p>
+<p><code>kind</code> further informs clients of best behavior for presenting daemons to users.
+A common design pattern for graphical user interfaces is to have two "levels" of interface for each piece of hardware---one small simplified interface and one complete "advanced menu" or "engineering screen" (examples: <a href="https://yaqc-cmds.wright.tools/en/latest/">yaqc-cmds</a>, <a href="https://pcdshub.github.io/typhos/v1.1.1/">typhos</a>).
+A kind of <code>normal</code> tells the client that the field should only be shown on the "advanced menu".
+A kind of <code>hinted</code> tells the client that the field is of principle importance and should be shown on the "simplified interface".
+In an effort to increase compatability between ecosystems, yaq has copied these keys directly from <a href="https://nsls-ii.github.io/ophyd/signals.html#kind">ophyd</a>.
+Every field must define <code>kind</code>---there is no default value.</p>
+<p><code>type</code> is a valid Avro type.
+It is encouraged to use simple types here, as most graphical clients may not be able to display arbitrarily complex types.</p>
+<h2 id="fields-and-traits">Fields and Traits<a class="headerlink" href="#fields-and-traits" title="Permanent link"> ¶</a></h2>
+<p>Fields may be specified by traits.
+Individual daemons may overload trait-specified fields, but only in the following cases:</p>
+<ul>
+<li>to change <code>dynamic</code> from <code>true</code> to <code>false</code></li>
+<li>to narrow the scope of a union type</li>
+</ul>
+<p>Of course, daemons may add additional fields as needed.
+For demonstration, the fields of three existing traits are shown below:</p>
+<p>has-position (<a href="https://yeps.yaq.fyi/301/">YEP-301</a>)</p>
+<pre><code>{
+  &quot;position&quot;: {
+    &quot;getter&quot;: &quot;get_position&quot;,
+    &quot;setter&quot;: &quot;set_position&quot;,
+    &quot;dyanamic&quot;: true,
+    &quot;kind&quot;: &quot;hinted&quot;,
+    &quot;type&quot;: &quot;double&quot;
+  }
+  &quot;destination&quot;: {
+    &quot;getter&quot;: &quot;get_destination&quot;,
+    &quot;dyanamic&quot;: true,
+    &quot;kind&quot;: &quot;normal&quot;,
+    &quot;type&quot;: &quot;double&quot;
+  }
+}
+</code></pre>
+<p>is-discrete (<a href="https://yeps.yaq.fyi/309/">YEP-309</a>)</p>
+<pre><code>{
+  &quot;position_identifier&quot;: {
+    &quot;getter&quot;: &quot;get_identifier&quot;,
+    &quot;setter&quot;: &quot;set_identifier&quot;,
+    &quot;dynamic&quot;: true,
+    &quot;kind&quot;: &quot;hinted&quot;,
+    &quot;type&quot;: &quot;string&quot;
+  }
+  &quot;position_identifiers&quot;: {
+    &quot;getter&quot;: &quot;get_position_identifiers&quot;,
+    &quot;dynamic&quot;: false,
+    &quot;kind&quot;: &quot;normal&quot;,
+    &quot;type&quot;: {&quot;type&quot;: &quot;map&quot;, &quot;values&quot;: &quot;double&quot;}
+  }
+}
+</code></pre>
+<p>has-limits (<a href="https://yeps.yaq.fyi/303/">YEP-303</a>)</p>
+<pre><code>{
+  &quot;limits&quot;: {
+    &quot;getter&quot;: &quot;get_limits&quot;,
+    &quot;dynamic&quot;: true,
+    &quot;kind&quot;: &quot;normal&quot;,
+    &quot;type&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: &quot;double&quot;}
+  }
+}
+</code></pre>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/23">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

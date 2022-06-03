@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>Logging for Daemons</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/106
+</h1>
+
+<hr>
+
+<h1>
+  Logging for Daemons
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>106</td></tr>
+<tr><th>Title:</th><td>Logging for Daemons</td></tr>
+<tr><th>Authors:</th><td>Kyle Sunden</td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2020-05-13, 2020-08-14, 2021-02-22</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP defines a consistent logging format for yaq daemons.
+This extends to the file storage and access over the RPC.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a><ul>
+<li><a href="#levels">Levels</a></li>
+<li><a href="#format">Format</a></li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#entry-point">Entry point</a></li>
+<li><a href="#storing-logs">Storing logs</a></li>
+<li><a href="#accessing-logs-over-rpc">Accessing logs over RPC</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>A consistent logging format is desirable for this ecosystem as it allows instant familiarity when using/debugging, external tools can easily be built to filter log messages appropriately, and logs can be stored and reviewed easily.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<h2 id="levels">Levels<a class="headerlink" href="#levels" title="Permanent link"> ¶</a></h2>
+<p>The levels used are those as defined by <a href="https://www.freedesktop.org/software/systemd/man/sd-daemon.html">sd-daemon</a> and <a href="http://man7.org/linux/man-pages/man3/syslog.3.html">syslogv</a>.</p>
+<pre><code>emergency  &quot;&lt;0&gt; EMERG&quot;   :  system is unusable
+alert      &quot;&lt;1&gt; ALERT&quot;   :  action must be taken immediately
+critical   &quot;&lt;2&gt; CRIT&quot;    :  critical conditions
+error      &quot;&lt;3&gt; ERR&quot;     :  error conditions
+warning    &quot;&lt;4&gt; WARNING&quot; :  warning conditions
+notice     &quot;&lt;5&gt; NOTICE&quot;  :  normal but significant condition
+info       &quot;&lt;6&gt; INFO&quot;    :  informational
+debug      &quot;&lt;7&gt; DEBUG&quot;   :  debug-level messages
+</code></pre>
+<p>Using these levels allows seamless integration with <a href="https://systemd.io/">systemd</a> and other daemon management programs.</p>
+<h2 id="format">Format<a class="headerlink" href="#format" title="Permanent link"> ¶</a></h2>
+<p>Individual log entries SHALL be of the format:</p>
+<pre><code>{level} : {timestamp} : {name} : {message}
+</code></pre>
+<p>Where <code>{level}</code> is the log level, with the numeric prefix and the abbreviation for readability (e.g. <code>&lt;6&gt; INFO</code>), <code>{timestamp}</code> is a valid <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO-8601 extended</a> timestamp <code>%Y-%m-%dT%H:%M:%S%z</code> with at least second precision and timezone specified, <code>{name}</code> is the name of the specific daemon which initiated the log entry (or <code>yaqd_core</code> if it was initiated outside of a daemon) and <code>{message}</code> is an arbitrary message string.</p>
+<p>For example:</p>
+<pre><code>&lt;4&gt; WARNING : 2020-05-13T23:28:25Z : my-daemon : This is a warning you might want to know about
+</code></pre>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link"> ¶</a></h2>
+<p>Logging behavior may be configured by the <a href="../102">YEP-102</a> configuration file.
+Configuration options are:</p>
+<ul>
+<li><code>log_level</code>, default <code>"info"</code></li>
+<li><code>log_to_file</code>, default <code>false</code></li>
+</ul>
+<h2 id="entry-point">Entry point<a class="headerlink" href="#entry-point" title="Permanent link"> ¶</a></h2>
+<p>This section extends <a href="../104">YEP-104</a>.
+Daemon entry points MUST have the option to override the configuration file.
+There SHALL be <code>--verbose</code> and the short form <code>-v</code> which indicates <code>debug</code> log level.
+There SHALL be <code>--log-level</code> and the short form <code>-l</code> which takes the string name given by the first column above.</p>
+<p>Daemons SHALL use the log level specified by the entry point, even if <code>log_level</code> is also specified by the configuration.</p>
+<h2 id="storing-logs">Storing logs<a class="headerlink" href="#storing-logs" title="Permanent link"> ¶</a></h2>
+<p>Because the log format was chosen to work well with external systems, some users may opt to record logs using external tools which read the stderr output.
+However, an internal implementation of log file storage SHALL be provided.
+The file names MUST begin with the daemon names, followed by a dash <code>-</code>.
+The files names MUST end with a timestamp (<a href="https://en.wikipedia.org/wiki/ISO_8601#Times">ISO-8601 basic</a>, <code>%Y%m%dT%H%M%S%z</code>), followed by the file extension <code>.log</code>.
+Files will be located in the operating system's user log directory.
+Patterns for each supported operating system follow:</p>
+<ul>
+<li>macOS: <code>~/Library/Logs/yaqd-&lt;kind&gt;/&lt;name&gt;-&lt;timestamp&gt;.log</code></li>
+<li>Linux: <code>~/.cache/yaqd-&lt;kind&gt;/log/&lt;name&gt;-&lt;timestamp&gt;.log</code></li>
+<li>Windows: <code>C:\Users\&lt;User&gt;\AppData\Local\yaq\yaqd-&lt;kind&gt;\Logs\&lt;name&gt;-&lt;timestamp&gt;.log</code></li>
+</ul>
+<p>Daemons SHALL only write log-files when the <a href="../102">YEP-102</a> config option <code>log_to_file</code> is set to <code>true</code>.</p>
+<h2 id="accessing-logs-over-rpc">Accessing logs over RPC<a class="headerlink" href="#accessing-logs-over-rpc" title="Permanent link"> ¶</a></h2>
+<p>A future version of this YEP will specify the RPC log access.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/10">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

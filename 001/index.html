@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>YEP Purpose and Guidelines</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/001
+</h1>
+
+<hr>
+
+<h1>
+  YEP Purpose and Guidelines
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>1</td></tr>
+<tr><th>Title:</th><td>YEP Purpose and Guidelines</td></tr>
+<tr><th>Authors:</th><td>Kyle Sunden, Blaise Thompson <blaise@untzag.com></td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>meta</td></tr>
+<tr><th>Post-History:</th><td>2020-04-22, 2020-04-23, 2020-07-02, 2020-07-05</td></tr>
+</table>
+
+
+<h1 id="what-is-a-yep">What is a YEP?<a class="headerlink" href="#what-is-a-yep" title="Permanent link"> ¶</a></h1>
+<p>YEP stands for "yaq enhancement proposal".
+YEPs are standards for use by the yaq ecosystem and community.
+YEPs provide concise technical specifications for features and processes.</p>
+<p>We intend YEP to be the primary mechanism for proposing new features of yaq, and collecting community input.
+YEPs are meant as a way to garner consensus around an idea, and documenting dissenting opinions.</p>
+<p>YEPs are markdown files stored in a <a href="https://gitlab.com/yaq/yeps">git repository</a>, and their revision history is the historical record of the proposal.</p>
+<p>Enhancement proposal comes from the term as used by the Python community.
+In particular, python as a whole has <a href="https://www.python.org/dev/peps/pep-0001/">PEPs</a>.
+Similar processes are also used by <a href="https://numpy.org/neps/">numpy</a>, <a href="https://matplotlib.org/stable/devel/MEP/index.html">matplotlib</a>, and others.</p>
+<h1 id="yep-index-numbers">YEP Index Numbers<a class="headerlink" href="#yep-index-numbers" title="Permanent link"> ¶</a></h1>
+<p>YEP index numbers are assigned by the core team.
+In general, they will be assigned in ascending order, but exceptions may be made.</p>
+<p>YEPs are roughly categorized by:</p>
+<ul>
+<li>&lt;100 Are Meta/Process YEPs about the procedures of the yaq ecosystem as a whole</li>
+<li>100s are Standard track yeps, things that an implementor would need to know</li>
+<li>200s are reserved for future use.</li>
+<li>300s are Trait Specifications</li>
+</ul>
+<h1 id="yep-status">YEP Status<a class="headerlink" href="#yep-status" title="Permanent link"> ¶</a></h1>
+<p>YEPs have only three available status codes:</p>
+<ul>
+<li>draft (start here)</li>
+<li>accepted</li>
+<li>rejected</li>
+</ul>
+<h1 id="yep-tags">YEP Tags<a class="headerlink" href="#yep-tags" title="Permanent link"> ¶</a></h1>
+<p>YEPs can have tags to help categorize their behavior.</p>
+<p>Current tags are:</p>
+<ul>
+<li><code>meta</code>: YEPs about YEPs</li>
+<li><code>standard</code>: YEPs which define standards an implementor would need to know</li>
+<li><code>trait</code>: YEPs which define a Trait</li>
+</ul>
+<h1 id="submitting-a-yep">Submitting a YEP<a class="headerlink" href="#submitting-a-yep" title="Permanent link"> ¶</a></h1>
+<p>The YEP submission project is not intended to be <em>challenging</em>, but is designed to encourage intentional, well reasoned changes to the yaq ecosystem.
+As such, there are a number of steps that should be taken in most cases.</p>
+<h2 id="an-idea">An Idea<a class="headerlink" href="#an-idea" title="Permanent link"> ¶</a></h2>
+<p>If you have an idea for a new YEP, start by chatting with members of the community.
+The <a href="https://yaq.fyi/contact/">contact page</a> provides ways to reach out to community members.
+It is generally a good idea to solicit feedback to ensure that the idea is both generally applicable and does not have any glaring negative consequences.
+This will help to define the scope and consider alternate approaches to the same problem.
+It can also save you time in the event that a similar idea was previously discussed and rejected (your idea may overcome the reasons it was rejected, but if it doesn't, there is no reason to spend time preparing a formal YEP).</p>
+<h2 id="submitting-a-yep_1">Submitting a YEP<a class="headerlink" href="#submitting-a-yep_1" title="Permanent link"> ¶</a></h2>
+<p>YEPs are tracked in a <a href="https://gitlab.com/yaq/yeps">GitLab repository</a>.
+After getting initial feedback informally, you can start to write a formal specification.
+This occurs via a GitLab <a href="https://gitlab.com/yaq/yeps/-/merge_requests">merge request</a>.
+Submitters with commit privileges may simply branch, outside contributors must first fork the repository.</p>
+<p>Within the <code>yeps</code> folder, copy <code>yep-012.md</code> into a new file with file name <code>yep-XXX.md</code> where <code>XXX</code> is the yep number.
+You can suggest a number, but it may be changed prior to acceptance as a draft.
+If you do not know, use <code>999</code>.</p>
+<p>Update the metadata, including the YEP title and your name in the <code>author</code> field.
+Fill out he sections in the body of the YEP as you see fit.</p>
+<p>Create an issue to discuss the YEP, and link to it in the Discussion section of the YEP.
+Finally, submit via a Merge Request.</p>
+<h2 id="initial-review">Initial Review<a class="headerlink" href="#initial-review" title="Permanent link"> ¶</a></h2>
+<p>The yaq team will start by giving a quick look at the file.
+Things like formatting errors and minor mistakes may be considered at this time, but importantly the initial review does <em>not</em> mean the YEP is final and accepted, only open for broader discussion.</p>
+<p>We may reject the YEP at this stage.
+Grounds for dismissal include poorly defined scope/reasoning, significant backwards incompatibility, and duplication of effort.</p>
+<p>This initial review may go back and forth to provide clarification.
+In particular, metadata in the Header should be largely correct and complete (aside from appending dates to the post-history, of course).</p>
+<p>Once satisfied, the draft YEP will be merged, the YEP number will be fully claimed and permanent, and the open review period will begin.</p>
+<h2 id="open-review">Open Review<a class="headerlink" href="#open-review" title="Permanent link"> ¶</a></h2>
+<p>In this stage, anybody in the community may comment on the YEP, with the YEP author responsible for responding to comments, and editing the text via additional merge requests.
+Most merge requests during this phase are likely to be accepted, but serve as way to trace the changes and resolution of discussion points.</p>
+<p>The length period is not defined, lasting only long enough that the Core Team has a consensus, feels the community has had an opportunity to comment, and discussion points are resolved.</p>
+<h2 id="the-decision">The Decision<a class="headerlink" href="#the-decision" title="Permanent link"> ¶</a></h2>
+<p>A Core Team member will open a Merge request changing the status of the YEP to "accepted" or "rejected".
+A different Core Team member will merge the request, and should do so with consensus of the core team.</p>
+<h1 id="what-belongs-in-a-yep">What belongs in a YEP?<a class="headerlink" href="#what-belongs-in-a-yep" title="Permanent link"> ¶</a></h1>
+<p>Each YEP typically has the following parts:</p>
+<ul>
+<li>Header -- Provide metadata including the index number, title, and author</li>
+<li>Abstract -- A short description of the issue being addressed</li>
+<li>Motivation -- An explaination for why the YEP exists (or should exist).
+                YEPs without sufficient motivation mmay be rejected outright.</li>
+<li>Specification -- The precise technical description of the proposal.
+                   This should be detiled enough to allow interoperable implementation
+                   in multiple languages.</li>
+<li>Backwards Compatibility --  All YEPs that introduce backwards incompatibilities must
+                              include a section describing these incompatibilities and
+                              their severity.
+                              The YEP must explain how the author proposes to deal with
+                              these incompatibilities.
+                              YEP submissions without a sufficient backwards
+                              compatibility treatise may be rejected outright.</li>
+<li>Rejected Ideas -- Ideas to address the issue at hand which were rejected for one
+                    reason or another, with brief reasoning why the chosen proposal is
+                    preferred.</li>
+<li>Discussion -- A link to the discussion issue on GitLab.</li>
+<li>Copyright -- Each new YEP must be  under a dual license of public domain and
+               <a href="https://choosealicense.com/licenses/cc0-1.0/">CC0-1.0-Universal</a>
+               (see this YEP for an example).
+               If the YEP content builds on other copyrighted material, that should be
+               acknowledged (see <a href="../100">YEP 100</a> for eample)</li>
+</ul>
+<p><a href="../012">YEP 012</a> is a template that makes remembering these sections easy.
+This is not a hard and fast rule, some YEPs may be more logically broken down into different sections.</p>
+<h1 id="yep-header-information">YEP Header Information<a class="headerlink" href="#yep-header-information" title="Permanent link"> ¶</a></h1>
+<p>Each YEP must begin with a header which includes metadata about the YEP:</p>
+<pre><code>---
+yep: 1
+title: YEP Purpose and Guidelines
+author: Kyle Sunden
+        Blaise Thompson &lt;blaise@untzag.com&gt;
+status: draft
+tags: meta
+post-history: 2020-04-22
+              2020-04-23
+---
+
+</code></pre>
+<p>These headers are parsed by <a href="https://python-markdown.github.io/extensions/meta_data/">a library</a> to help render the website and <a href="../000">index</a> page.
+Please include the <code>---</code> markers, and note that blank lines are NOT allowed in this block.
+The YEP index number must be confirmed by a member of the core team, though you may suggest one.
+The title should be short and descriptive.
+The Status and tags are as described above.
+Tags are newline delimited.
+Authors are newline delimited, must be indented, and emails are optional.
+Dates are in <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a> format (date only) and are newline delimited.</p>
+<h1 id="updating-yeps">Updating YEPs<a class="headerlink" href="#updating-yeps" title="Permanent link"> ¶</a></h1>
+<p>Each YEP has a corresponding GitLab issue linked in the YEP.
+This issue is where discussion on the YEP should typically take place.
+If there are new discussion points, closed issues can be reopened.
+Additional issues regarding YEPs, if created should have their contents reproduced in the official discussion issue.
+However, if extended discussion takes place in an alternate issue, they should also be linked in the Discussion section of the YEP.</p>
+<p>Updates are performed using GitLab Merge Requests to the <a href="https://gitlab.com/yaq/yeps">yeps repository</a> which update the markdown files in the <code>yeps</code> folder.
+Updates to YEPs MUST achieve consensus among the core team.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/7">GitLab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

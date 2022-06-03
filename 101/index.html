@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>Daemon Socket Transport Layer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/101
+</h1>
+
+<hr>
+
+<h1>
+  Daemon Socket Transport Layer
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>101</td></tr>
+<tr><th>Title:</th><td>Daemon Socket Transport Layer</td></tr>
+<tr><th>Authors:</th><td>Kyle Sunden</td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2020-04-14, 2020-04-21, 2020-07-02, 2021-01-18</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP defines the transport layer for yaq daemon communication as a <a href="https://en.wikipedia.org/wiki/Transmission_Control_Protocol">Transmission Control Protocol</a> (TCP) Socket.
+The contents of the data transfer are defined in <a href="https://yeps.yaq.fyi/107">YEP 107</a>.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a></li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>This is a foundational piece of the yaq daemon infrastructure.
+TCP was chosen because it is ubiquitous, with interfaces in many languages and platforms.
+Additionally, the use of TCP/IP provides for the natural ability to use both local and remote daemons in the same experimental configuration.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<p>Each Daemon opens up one TCP/IP port.
+This port SHOULD serve on ports 36000-39999.
+This range avoids collisions with most common port usage in other applications, however care should be taken to avoid conflicting with other programs on the host machines.
+Additionally, yaq ecosystem tools which scan to identify daemons will only look in this range by default.</p>
+<p>This port is specified in the configuration file <a href="https://yeps.yaq.fyi/102">YEP 102</a>.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/2">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the
+CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

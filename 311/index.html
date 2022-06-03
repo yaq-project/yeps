@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>has-mapping</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/311
+</h1>
+
+<hr>
+
+<h1>
+  has-mapping
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>311</td></tr>
+<tr><th>Title:</th><td>has-mapping</td></tr>
+<tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
+<tr><th>Status:</th><td>draft</td></tr>
+<tr><th>Tags:</th><td>trait</td></tr>
+<tr><th>Post-History:</th><td>2020-10-29</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP defines the concept of "mapping" arrays.
+These arrays add additional "context" to the channel arrays defined by is-sensor (<a href="https://yeps.yaq.fyi/302/">YEP-302</a>).
+For example, a mapping might describe which wavelength of light falls upon each pixel of a spectrometer array detector.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a><ul>
+<li><a href="#message-get_channel_mappings">message: get_channel_mappings</a></li>
+<li><a href="#message-get_mapping_id">message: get_mapping_id</a></li>
+<li><a href="#message-get_mapping_units">message: get_mapping_units</a></li>
+<li><a href="#message-get_mappings">message: get_mappings</a></li>
+</ul>
+</li>
+<li><a href="#rejected-ideas">Rejected Ideas</a></li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>Certain sensors contain important information beyond their raw values.
+Consider an array-sensor within an optical <a href="https://en.wikipedia.org/wiki/Spectrometer">spectrometer</a>.
+Such an array detector could be implemented according to the is-sensor trait (<a href="https://yeps.yaq.fyi/302/">YEP-302</a>), with a channel for the measured light intensity at each pixel.
+To use this information, however, clients must also know the relationship between pixel index and light wavelength: the "mapping" of the array detector.
+This YEP defines a trait which allows daemons to expose mapping information over a consistent interface.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<p>This trait requires is-sensor (<a href="https://yeps.yaq.fyi/302/">YEP-302</a>).</p>
+<p>This trait implements mappings as a collection of arrays completely separate from channels.
+The principle feature of this trait is the new message <code>get_mappings</code>.</p>
+<h2 id="message-get_channel_mappings">message: get_channel_mappings<a class="headerlink" href="#message-get_channel_mappings" title="Permanent link"> ¶</a></h2>
+<p>response: {"type": "map", "values": {"type": "array", "items": "string"}}</p>
+<p>Keys being channel names.
+Values array of keys from get_mappings.
+Can be many mappings per channel, or no mappings for a given channel (empty array).</p>
+<p>Mappings must have the same dimensionality as their associated channel.
+Do not need to be the same size.
+They must broadcast into their associated channel.</p>
+<h2 id="message-get_mapping_id">message: get_mapping_id<a class="headerlink" href="#message-get_mapping_id" title="Permanent link"> ¶</a></h2>
+<p>response: int</p>
+<p>Mapping ID.
+This integer increments every time the mapping is updated.
+Clients can safely check this id to verify that their cached mappings are correct, if desired.</p>
+<h2 id="message-get_mapping_units">message: get_mapping_units<a class="headerlink" href="#message-get_mapping_units" title="Permanent link"> ¶</a></h2>
+<p>response: {"type": "map", "values": ["null", "string"]}</p>
+<p>Must return units for every mapping.
+Units can be null.</p>
+<h2 id="message-get_mappings">message: get_mappings<a class="headerlink" href="#message-get_mappings" title="Permanent link"> ¶</a></h2>
+<p>response: {"type": "map", "values": ["double", "ndarray", "int"]}</p>
+<p>Keys used in get_channel_mappings</p>
+<h1 id="rejected-ideas">Rejected Ideas<a class="headerlink" href="#rejected-ideas" title="Permanent link"> ¶</a></h1>
+<p>At one point in yaq development, mappings were included simply as additional channels.
+While elegantly simple, this idea proved insufficient.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/25">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>

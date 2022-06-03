@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>has-measure-trigger</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/310
+</h1>
+
+<hr>
+
+<h1>
+  has-measure-trigger
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>310</td></tr>
+<tr><th>Title:</th><td>has-measure-trigger</td></tr>
+<tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
+<tr><th>Status:</th><td>draft</td></tr>
+<tr><th>Tags:</th><td>trait</td></tr>
+<tr><th>Post-History:</th><td>2020-07-14</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP defines the has-measure-trigger trait.
+Daemons implementing this trait allow measurement to be software triggered over the RPC.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#proposal">Proposal</a><ul>
+<li><a href="#config-loop_at_startup">config: loop_at_startup</a></li>
+<li><a href="#message-measure">message: measure</a></li>
+<li><a href="#message-stop_looping">message: stop_looping</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>In many cases, it's relevant to tell a sensor "begin measurement now".
+This software triggered measurement pattern is very common.
+This trait standardizes this common sensor interface pattern within the yaq ecosystem.</p>
+<h1 id="proposal">Proposal<a class="headerlink" href="#proposal" title="Permanent link"> ¶</a></h1>
+<p>This trait requires is-sensor: see <a href="https://yeps.yaq.fyi/302/">YEP-302</a>.</p>
+<p>This trait defines the concept of "looping".
+When a sensor is looping, it should self-trigger the moment the previous acquisition is done.
+In certain cases, setting a sensor to looping makes client implementations much easier.
+Daemons will remain always busy while looping.</p>
+<p>This trait defines the concept of a "measurement_id".
+This is an integer that should increase every time the measure message is called.
+<code>get_measured</code> returns this measurement_id as a channel.</p>
+<h2 id="config-loop_at_startup">config: loop_at_startup<a class="headerlink" href="#config-loop_at_startup" title="Permanent link"> ¶</a></h2>
+<p>type: boolean</p>
+<p>default: false</p>
+<p>If set to true, the daemon will begin to loop measure as soon as it starts.
+By using this config, users may ignore software triggering and treat this sensor as a pure asyncronus measurement device.</p>
+<h2 id="message-measure">message: measure<a class="headerlink" href="#message-measure" title="Permanent link"> ¶</a></h2>
+<p>parameter: loop: boolean
+parameter: loop: default: false</p>
+<p>Initiate a measurement. Returns integer, measurement ID.</p>
+<h2 id="message-stop_looping">message: stop_looping<a class="headerlink" href="#message-stop_looping" title="Permanent link"> ¶</a></h2>
+<p>Stop looping measurement.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/21">gitlab issue</a> for this YEP.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-06-03 00:01:11
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>
