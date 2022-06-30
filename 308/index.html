@@ -21,14 +21,14 @@
 <tr><th>YEP:</th><td>308</td></tr>
 <tr><th>Title:</th><td>uses-i2c</td></tr>
 <tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
-<tr><th>Status:</th><td>draft</td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
 <tr><th>Tags:</th><td>trait</td></tr>
-<tr><th>Post-History:</th><td>2020-04-22, 2020-07-14</td></tr>
+<tr><th>Post-History:</th><td>2020-04-22, 2020-07-14, 2022-06-30</td></tr>
 </table>
 
 
 <h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
-<p>This trait has been accepted.
+<p>This YEP defines the uses-i2c trait for communication over Inter-Integrated Circuit networks
 See built documentation at at <a href="https://yaq.fyi/traits/uses-i2c">yaq.fyi</a>.</p>
 <h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
 <div class="toc">
@@ -36,19 +36,29 @@ See built documentation at at <a href="https://yaq.fyi/traits/uses-i2c">yaq.fyi<
 <li><a href="#abstract">Abstract</a></li>
 <li><a href="#table-of-contents">Table of Contents</a></li>
 <li><a href="#motivation">Motivation</a></li>
-<li><a href="#proposal">Proposal</a></li>
+<li><a href="#proposal">Proposal</a><ul>
+<li><a href="#config-i2c_addr-int">config: i2c_addr (int)</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
 <li><a href="#copyright">Copyright</a></li>
 </ul>
 </div>
 <h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>I2C is a common serial communication format for low level chip to chip hardware communication.
+I2C's format includes an address for identifying the endpoint of communication.</p>
 <h1 id="proposal">Proposal<a class="headerlink" href="#proposal" title="Permanent link"> ¶</a></h1>
+<h2 id="config-i2c_addr-int">config: <code>i2c_addr</code> (int)<a class="headerlink" href="#config-i2c_addr-int" title="Permanent link"> ¶</a></h2>
+<p>The bus address of the hardware communicated to by the daemon.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/17">gitlab issue</a> for this YEP.</p>
 <h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
 <p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
 
 <hr>
 
 <p>
-built 2022-06-30 22:22:29
+built 2022-06-30 22:40:26
                                     
 <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
 </p>

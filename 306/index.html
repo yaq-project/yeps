@@ -21,14 +21,14 @@
 <tr><th>YEP:</th><td>306</td></tr>
 <tr><th>Title:</th><td>uses-serial</td></tr>
 <tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
-<tr><th>Status:</th><td>draft</td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
 <tr><th>Tags:</th><td>trait</td></tr>
-<tr><th>Post-History:</th><td>2020-04-22, 2020-07-14</td></tr>
+<tr><th>Post-History:</th><td>2020-04-22, 2020-07-14, 2022-06-30</td></tr>
 </table>
 
 
 <h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
-<p>This trait has been accepted.
+<p>This YEP defines the uses-serial trait for hardware which communicates over a serial bus.
 See built documentation at at <a href="https://yaq.fyi/traits/uses-serial">yaq.fyi</a>.</p>
 <h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
 <div class="toc">
@@ -36,19 +36,32 @@ See built documentation at at <a href="https://yaq.fyi/traits/uses-serial">yaq.f
 <li><a href="#abstract">Abstract</a></li>
 <li><a href="#table-of-contents">Table of Contents</a></li>
 <li><a href="#motivation">Motivation</a></li>
-<li><a href="#proposal">Proposal</a></li>
+<li><a href="#definition">Definition</a><ul>
+<li><a href="#message-direct_serial_write">message: direct_serial_write</a></li>
+</ul>
+</li>
 <li><a href="#copyright">Copyright</a></li>
 </ul>
 </div>
 <h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
-<h1 id="proposal">Proposal<a class="headerlink" href="#proposal" title="Permanent link"> ¶</a></h1>
+<p>Serial communication is one of the most common communication formats for hardware.
+This provides a common interface for hardware which communicates in similar fashions.</p>
+<h1 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link"> ¶</a></h1>
+<h2 id="message-direct_serial_write">message: <code>direct_serial_write</code><a class="headerlink" href="#message-direct_serial_write" title="Permanent link"> ¶</a></h2>
+<ul>
+<li>Parameter: message (bytes)</li>
+</ul>
+<p>This provides a debugging tool to directly write bytes onto the serial bus.
+This message does not return anything, and should information be returned as a result it should be logged
+at an INFO level.
+This method is not intended for normal use outside of debugging.</p>
 <h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
 <p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
 
 <hr>
 
 <p>
-built 2022-06-30 22:22:29
+built 2022-06-30 22:40:26
                                     
 <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
 </p>

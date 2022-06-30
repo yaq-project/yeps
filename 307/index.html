@@ -21,14 +21,14 @@
 <tr><th>YEP:</th><td>307</td></tr>
 <tr><th>Title:</th><td>uses-uart</td></tr>
 <tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
-<tr><th>Status:</th><td>draft</td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
 <tr><th>Tags:</th><td>trait</td></tr>
-<tr><th>Post-History:</th><td>2020-04-22, 2020-07-14</td></tr>
+<tr><th>Post-History:</th><td>2020-04-22, 2020-07-14, 2022-06-30</td></tr>
 </table>
 
 
 <h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
-<p>This trait has been accepted.
+<p>This defines the interface for configuring hardware which communicates over UART style serial.
 See built documentation at at <a href="https://yaq.fyi/traits/uses-uart">yaq.fyi</a>.</p>
 <h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
 <div class="toc">
@@ -36,19 +36,33 @@ See built documentation at at <a href="https://yaq.fyi/traits/uses-uart">yaq.fyi
 <li><a href="#abstract">Abstract</a></li>
 <li><a href="#table-of-contents">Table of Contents</a></li>
 <li><a href="#motivation">Motivation</a></li>
-<li><a href="#proposal">Proposal</a></li>
+<li><a href="#proposal">Proposal</a><ul>
+<li><a href="#config-serial_port-string">config: serial_port (string)</a></li>
+<li><a href="#config-baud_rate-int">config: baud_rate (int)</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
 <li><a href="#copyright">Copyright</a></li>
 </ul>
 </div>
 <h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>UART is a common subform of serial communication which writes to a serial port at a specific baud rate.
+This form of serial communication is generally used for RS-232 and RS-485 style serial as well as some
+forms of board level GPIO serial on certain computers.</p>
 <h1 id="proposal">Proposal<a class="headerlink" href="#proposal" title="Permanent link"> ¶</a></h1>
+<h2 id="config-serial_port-string">config: <code>serial_port</code> (string)<a class="headerlink" href="#config-serial_port-string" title="Permanent link"> ¶</a></h2>
+<p>This identifies which serial port to use. On Windows this is generally something like <code>COM4</code>, on Linux it would look like <code>/dev/ttyUSB0</code>.</p>
+<h2 id="config-baud_rate-int">config: <code>baud_rate</code> (int)<a class="headerlink" href="#config-baud_rate-int" title="Permanent link"> ¶</a></h2>
+<p>The speed of UART communication. Common baud rates include 9600, 19200, and 115200.</p>
+<h1 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link"> ¶</a></h1>
+<p>Discussion can be found on the <a href="https://gitlab.com/yaq/yeps/-/issues/18">gitlab issue</a> for this YEP.</p>
 <h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
 <p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
 
 <hr>
 
 <p>
-built 2022-06-30 22:22:29
+built 2022-06-30 22:40:26
                                     
 <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
 </p>
