@@ -47,8 +47,13 @@
 </ul>
 </div>
 <h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
-<p>Many daemons require additional hardware to be present to function: attune daemons require motors and (optionally) delays.
-Delays in turn require a physical stage.
+<p>In some complex systems it is convinient to create "wrapper" daemons.
+These wrappers might offer a simplified or alternative "higher-level" interface to a collection of "lower-level" hardware interface daemons.
+Such higher-level daemons can be more reusable---the lower-level daemons can be interchanged while keeping the same high-level interface code in place.
+As an example, <a href="https://github.com/yaq-project/yaqd-attune">yaqd-attune</a> provides a simplified interface to an optical parametric amplifier made up of many discrete motors.</p>
+<p>Certain clients would benefit from knowing inter-daemon dependencies.
+For example, when making a best effort live plot, a client might choose to use the wrapper daemon's position as the independent variable and hide the lower-level daemons.
+This YEP provides a simple way for clients to request this metadata.
 These layers of daemon access provide information to clients about relationships between hardware, including but not limited to:</p>
 <ul>
 <li>Which devices should be considered "top level" and increased in prominence to the user</li>
@@ -76,7 +81,7 @@ It is recommended that the config is well documented and accepts at least host:p
 <hr>
 
 <p>
-built 2022-06-30 22:40:26
+built 2022-06-30 23:38:55
                                     
 <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
 </p>
