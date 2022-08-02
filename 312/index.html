@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>has-transformed-position</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/312
+</h1>
+
+<hr>
+
+<h1>
+  has-transformed-position
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>312</td></tr>
+<tr><th>Title:</th><td>has-transformed-position</td></tr>
+<tr><th>Authors:</th><td>Dan Kohler <ddkohler@wisc.edu></td></tr>
+<tr><th>Status:</th><td>accepted</td></tr>
+<tr><th>Tags:</th><td>trait</td></tr>
+<tr><th>Post-History:</th><td>2022-06-01</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP defines the <code>has-transformed-position</code> trait.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#proposal">Proposal</a><ul>
+<li><a href="#implement-transform-parameters-as-properties">Implement transform parameters as properties</a></li>
+</ul>
+</li>
+<li><a href="#specification">Specification</a><ul>
+<li><a href="#state">State</a><ul>
+<li><a href="#native_reference_position-float">native_reference_position (float)</a></li>
+</ul>
+</li>
+<li><a href="#messages">Messages</a><ul>
+<li><a href="#to_transformed">to_transformed</a></li>
+<li><a href="#to_native">to_native</a></li>
+<li><a href="#set_native_reference">set_native_reference</a></li>
+<li><a href="#get_native_reference">get_native_reference</a></li>
+<li><a href="#get_native_position">get_native_position</a></li>
+<li><a href="#set_native_position">set_native_position</a></li>
+<li><a href="#get_native_limits">get_native_limits</a></li>
+<li><a href="#get_native_units">get_native_units</a></li>
+</ul>
+</li>
+<li><a href="#properties">Properties</a><ul>
+<li><a href="#native_reference_position">native_reference_position</a></li>
+<li><a href="#native_position">native_position</a></li>
+<li><a href="#native_destination">native_destination</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#backwards-compatibility">Backwards Compatibility</a></li>
+<li><a href="#rejected-ideas">Rejected Ideas</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>Certain motors have use for both an absolute, or "native", position (defined by hardware) and a relative position (defined by the implementation of the motor within a system).
+For example, a rotational stage may have an hardware position defined as steps from a home position, but an experimenter would care more about the angular position relative to a special angle of the system (e.g. normal incidence).</p>
+<p>One of the most basic desires is to offset motor positions so that the position can be set in "relative coordinates":</p>
+<p>Scheme 1:</p>
+<pre><code>              hw limit 1   |---------*------------|  hw limit 2
+
+native coordinates         0 ... ... x ...   ... max
+relative coordinates      -x ... ... 0 ...   ... max-x
+</code></pre>
+<p>A further abstraction is to transform relative positions into positions and units meaningful to the experimenter.  Such could be achieved by some function <code>f</code>:</p>
+<p>Scheme 2:</p>
+<pre><code>              hw limit 1   |---------*------------|  hw limit 2
+
+relative coordinates      -x ... ... 0 ...   ... max-x
+transformed coordinates  f(-x) .... f(0) ...... f(max-x)
+</code></pre>
+<p>The functional form of <code>f</code>, which relates relative coordinates to transformed coordinates, is daemon specific.
+The parameters of the function are implementation specific.</p>
+<h1 id="proposal">Proposal<a class="headerlink" href="#proposal" title="Permanent link"> ¶</a></h1>
+<p>We propose a new trait, <code>has-transformed-position</code>.</p>
+<p>This trait distinguishes two types of positions: a <code>native_position</code>, which is a position that relates to underlying hardware calls, and <code>position</code>, which is derived from the native position according to some functional form, <code>to_transformed</code>.
+The functional form is daemon specific; parameters for the functional form should be specified in state or config, whichever the developer sees as appropriate.
+The inverse of the function, <code>to_native</code>, is also specified.</p>
+<p>The trait introduces one explicit functional parameter, the state variable <code>reference_position</code>, which establishes the null position (0 in the Schemes above) in the native coordinate system.
+As a default, the functional form of <code>to_transformed</code> uses only this reference position to transform coordinates:</p>
+<pre><code>to_transformed(x) = x - reference_position
+to_native = x + reference_position
+</code></pre>
+<p>Other functional forms must be hard-coded into the daemon.
+Parameters controlling these functional forms should be implemented as yaq properties with "metadata" record kind (see below).</p>
+<p>Transform parameters are subject to change, so native positions are more robust.  As such, state is recorded through native units.
+In contrast, client calls to the <code>position</code> property will report transformed coordinates.</p>
+<h2 id="implement-transform-parameters-as-properties">Implement transform parameters as properties<a class="headerlink" href="#implement-transform-parameters-as-properties" title="Permanent link"> ¶</a></h2>
+<p>In contrast to <code>position</code>, which is a property with a "data" record kind,  <code>native_position</code> has a "metadata" record kind.
+Consequently, acquisitions hardware are compelled to not track native position across scans, and a varying <code>native_position</code> can only be discerned from inverting the <code>position</code>.</p>
+<p>For this reason, it is <em>strongly recommended that all transform parameters are properties with "metadata" record kind</em>.
+This is already done with the built-in <code>reference_position</code> parameter, but individual daemons will have to implement this for any other parameters.
+Recording parameters into metadata ensures that acquisitions will have the necessary parameters to invert <code>position</code> into <code>native_position</code> if the need arises.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<p>This trait requires <code>has-limits</code> (<a href="../303">YEP-303</a>).
+This trait expands the <code>has-limits</code> trait by controlling motor positions using two coordinate systems.
+One frame (the "transformed" frame) is for common client control.
+The other frame (the "native" frame) reports position in terms of low-level motor control.</p>
+<h2 id="state">State<a class="headerlink" href="#state" title="Permanent link"> ¶</a></h2>
+<h3 id="native_reference_position-float">native_reference_position (float)<a class="headerlink" href="#native_reference_position-float" title="Permanent link"> ¶</a></h3>
+<p>The reference position, expressed in native coordinates.
+Default is <code>0.0</code> (i.e. reference position is the same as hardware null).</p>
+<h2 id="messages">Messages<a class="headerlink" href="#messages" title="Permanent link"> ¶</a></h2>
+<h3 id="to_transformed">to_transformed<a class="headerlink" href="#to_transformed" title="Permanent link"> ¶</a></h3>
+<p>request : float</p>
+<p>response : float</p>
+<p>Convert a native coordinate to transformed.</p>
+<h3 id="to_native">to_native<a class="headerlink" href="#to_native" title="Permanent link"> ¶</a></h3>
+<p>request : float</p>
+<p>response : float</p>
+<p>Convert a transformed coordinate to native.
+The inverse of <code>to_transformed</code>.</p>
+<h3 id="set_native_reference">set_native_reference<a class="headerlink" href="#set_native_reference" title="Permanent link"> ¶</a></h3>
+<p>request : float</p>
+<p>Set the reference position in native coordinates.
+Reference position need not be within hardware limits.</p>
+<h3 id="get_native_reference">get_native_reference<a class="headerlink" href="#get_native_reference" title="Permanent link"> ¶</a></h3>
+<p>response : float</p>
+<p>Get the reference position in native coordinates.</p>
+<h3 id="get_native_position">get_native_position<a class="headerlink" href="#get_native_position" title="Permanent link"> ¶</a></h3>
+<p>response : float</p>
+<p>Get the current position in native coordinates.</p>
+<h3 id="set_native_position">set_native_position<a class="headerlink" href="#set_native_position" title="Permanent link"> ¶</a></h3>
+<p>request : float</p>
+<p>Set the current position in native coordinates.</p>
+<h3 id="get_native_limits">get_native_limits<a class="headerlink" href="#get_native_limits" title="Permanent link"> ¶</a></h3>
+<p>response : {"type": "array", "values" : ["float]}</p>
+<p>Returns limits in the relative coordinate system.</p>
+<h3 id="get_native_units">get_native_units<a class="headerlink" href="#get_native_units" title="Permanent link"> ¶</a></h3>
+<p>response : "string"</p>
+<p>Get the units of native coordinates.</p>
+<h2 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link"> ¶</a></h2>
+<h3 id="native_reference_position">native_reference_position<a class="headerlink" href="#native_reference_position" title="Permanent link"> ¶</a></h3>
+<ul>
+<li>getter : "get_native_reference"</li>
+<li>setter : "set_native_reference"</li>
+<li>units_getter : "get_native_units"</li>
+<li>control_kind : "normal"</li>
+<li>record_kind : "metadata"</li>
+<li>type : "double"</li>
+</ul>
+<h3 id="native_position">native_position<a class="headerlink" href="#native_position" title="Permanent link"> ¶</a></h3>
+<ul>
+<li>getter : "get_native_position"</li>
+<li>units_getter : "get_native_units"</li>
+<li>control_kind : "normal"</li>
+<li>record_kind : "metadata"</li>
+<li>type : "double"</li>
+</ul>
+<h3 id="native_destination">native_destination<a class="headerlink" href="#native_destination" title="Permanent link"> ¶</a></h3>
+<ul>
+<li>getter : "get_native_destination"</li>
+<li>setter : "set_native_position"</li>
+<li>limits_getter : "get_native_limits"</li>
+<li>units_getter : "get_native_units"</li>
+<li>control_kind : "normal"</li>
+<li>record_kind : "metadata"</li>
+<li>type : "double"</li>
+</ul>
+<h1 id="backwards-compatibility">Backwards Compatibility<a class="headerlink" href="#backwards-compatibility" title="Permanent link"> ¶</a></h1>
+<p>This trait has no effect on <code>has-limits</code> when <code>reference_position = 0.0</code> and <code>to_transformed(x) == to_native(x) == x</code>.</p>
+<p>In state, all values relating to position (<code>position</code>, <code>destination</code>, <code>native_reference_position</code> and <code>hw_limits</code>) are stored in native coordinates.
+This is so that state values will remain valid even when transforms change.</p>
+<h1 id="rejected-ideas">Rejected Ideas<a class="headerlink" href="#rejected-ideas" title="Permanent link"> ¶</a></h1>
+<ul>
+<li>An earlier version of this trait, <code>has-reference-position</code>, proposed to use offset and invert state variables to control the transformed position, but did not propose arbitrary functional forms (<code>to_transformed</code>). This was a simpler trait than the accepted form, but we concluded that the functional form would be applicable across a wide range of daemons. This early version of the trait is the default implementation of the new trait.</li>
+</ul>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-08-02 15:24:12
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>
