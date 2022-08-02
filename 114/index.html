@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=80ch">
+  <title>yaqd-controld Specification</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>
+<a href=https://yaq.fyi/>yaq</a>-<a href=../000/>yeps</a>/114
+</h1>
+
+<hr>
+
+<h1>
+  yaqd-controld Specification
+</h1>
+
+<table>
+<tr><th>YEP:</th><td>114</td></tr>
+<tr><th>Title:</th><td>yaqd-controld Specification</td></tr>
+<tr><th>Authors:</th><td>Kyle Sunden <yeps@ksunden.space></td></tr>
+<tr><th>Status:</th><td>draft</td></tr>
+<tr><th>Tags:</th><td>standard</td></tr>
+<tr><th>Post-History:</th><td>2022-07-19</td></tr>
+</table>
+
+
+<h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
+<p>This YEP proposes a standard special yaq daemon to expose functionality of <code>yaqd-control</code> over a yaq TCP interface.
+Such a daemon provides the ability to configure daemons, start/stop/enable/disable background daemons, listing available daemons and informing of their status.</p>
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
+<div class="toc">
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a><ul>
+<li><a href="#get_daemon_config">get_daemon_config</a></li>
+<li><a href="#edit_daemon_config">edit_daemon_config</a></li>
+<li><a href="#start">start</a></li>
+<li><a href="#stop">stop</a></li>
+<li><a href="#enable">enable</a></li>
+<li><a href="#disable">disable</a></li>
+<li><a href="#list">list</a></li>
+<li><a href="#status">status</a></li>
+</ul>
+</li>
+<li><a href="#yaqd-control-cli-changes">yaqd-control cli changes</a></li>
+<li><a href="#future-directions">Future Directions</a></li>
+<li><a href="#copyright">Copyright</a></li>
+</ul>
+</div>
+<h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
+<p>The tools provided by <a href="https://control.yaq.fyi"><code>yaqd-control</code></a> (and specifically the <code>yaqd</code> command line interface) are useful for managing daemons, but other than listing and checking status only work for daemons running on the local machine.
+Additionally, this daemon could serve as a dynamic platform to build additional functionality useful for managing daemon states.</p>
+<h1 id="specification">Specification<a class="headerlink" href="#specification" title="Permanent link"> ¶</a></h1>
+<p><code>yaqd-controld</code> is a special yaq daemon serving on port 46000 (outside of the normal range for yaq daemons, not expected to appear in most list and status queries).</p>
+<p>This daemon provides the following messages:</p>
+<h2 id="get_daemon_config"><code>get_daemon_config</code><a class="headerlink" href="#get_daemon_config" title="Permanent link"> ¶</a></h2>
+<p>parameter: <code>kind</code>: string</p>
+<p>response: string</p>
+<p>Get the contents of the config file for <code>kind</code></p>
+<h2 id="edit_daemon_config"><code>edit_daemon_config</code><a class="headerlink" href="#edit_daemon_config" title="Permanent link"> ¶</a></h2>
+<p>parameter: <code>kind</code>: string</p>
+<p>parameter: <code>body</code>: string</p>
+<p>Write the contents of <code>body</code> to the config file for <code>kind</code></p>
+<h2 id="start"><code>start</code><a class="headerlink" href="#start" title="Permanent link"> ¶</a></h2>
+<p>parameter: <code>kind</code>: string or list of string</p>
+<p>Start a daemon or set of daemons running in the background service manager.</p>
+<h2 id="stop"><code>stop</code><a class="headerlink" href="#stop" title="Permanent link"> ¶</a></h2>
+<p>parameter: <code>kind</code>: string or list of string</p>
+<p>Stop a daemon or set of daemons running in the background service manager.</p>
+<h2 id="enable"><code>enable</code><a class="headerlink" href="#enable" title="Permanent link"> ¶</a></h2>
+<p>parameter: <code>kind</code>: string or list of string</p>
+<p>TODO: authentication story (password entry is currently interactive, not thrilled with passing in plain text over the network)</p>
+<p>Enable a daemon or set of daemons in the background service manager.</p>
+<h2 id="disable"><code>disable</code><a class="headerlink" href="#disable" title="Permanent link"> ¶</a></h2>
+<p>parameter: <code>kind</code>: string or list of string</p>
+<p>Disable a daemon or set of daemons in the background service manager.</p>
+<h2 id="list"><code>list</code><a class="headerlink" href="#list" title="Permanent link"> ¶</a></h2>
+<p>List known local daemons, providing host, port, kind, and name for each.
+Provided as a map of record entries, formatting is client side.</p>
+<h2 id="status"><code>status</code><a class="headerlink" href="#status" title="Permanent link"> ¶</a></h2>
+<p>List known local daemons, providing host, port, kind, and name, online status, busy status for each.
+Provided as a map of record entries, formatting is client side.</p>
+<h1 id="yaqd-control-cli-changes">yaqd-control cli changes<a class="headerlink" href="#yaqd-control-cli-changes" title="Permanent link"> ¶</a></h1>
+<p><code>yaqd</code> client entry point can then be updated to use the <code>yaqd-controld</code> backend when available, while defaulting to current behavior when not.</p>
+<p>It can be made to be more dynamic, allowing additional parameters and/or interactive prompts to choose whether to run locally or remotely.</p>
+<p>Sharing of known daemons across the network can be done via <code>yaqd-controld</code> rather than only by scanning, which can be a slow process.</p>
+<h1 id="future-directions">Future Directions<a class="headerlink" href="#future-directions" title="Permanent link"> ¶</a></h1>
+<p>While not part of the initial specification, this daemon could be used a the basis to run more dynamic sets of daemons (i.e. running daemons in the background without using system service manager to persist across reboots).</p>
+<p>Additionally, this daemon could be used to consolidate and query logs from running daemons.</p>
+<h1 id="copyright">Copyright<a class="headerlink" href="#copyright" title="Permanent link"> ¶</a></h1>
+<p>This document is placed in the public domain or under the CC0-1.0-Universal license, whichever is more permissive.</p>
+
+<hr>
+
+<p>
+built 2022-08-02 01:17:08
+                                    
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
+</p>
+
+</body>
+</html>
