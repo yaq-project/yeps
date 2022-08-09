@@ -33,3 +33,16 @@ code {
   background: #111314;
   color: #de935f
 }
+
+table {
+  width: 100%;
+}
+
+table, th, td {
+  border: 1px solid #969896;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 5px;
+}

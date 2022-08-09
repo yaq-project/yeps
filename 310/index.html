@@ -23,13 +23,13 @@
 <tr><th>Authors:</th><td>Blaise Thompson <blaise@untzag.com></td></tr>
 <tr><th>Status:</th><td>draft</td></tr>
 <tr><th>Tags:</th><td>trait</td></tr>
-<tr><th>Post-History:</th><td>2020-07-14</td></tr>
+<tr><th>Post-History:</th><td>2020-07-14, 2022-08-01</td></tr>
 </table>
 
 
 <h1 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link"> ¶</a></h1>
 <p>This YEP defines the has-measure-trigger trait.
-Daemons implementing this trait allow measurement to be software triggered over the RPC.</p>
+Daemons implementing this trait allow measurement to be software triggered over the yaq interface.</p>
 <h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link"> ¶</a></h1>
 <div class="toc">
 <ul>
@@ -47,17 +47,138 @@ Daemons implementing this trait allow measurement to be software triggered over 
 </div>
 <h1 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link"> ¶</a></h1>
 <p>In many cases, it's relevant to tell a sensor "begin measurement now".
-This software triggered measurement pattern is very common.
+For example, you might wish to wait for a motor to arrive at its position before telling a sensor to make a measurement.
 This trait standardizes this common sensor interface pattern within the yaq ecosystem.</p>
+<p>Note that this trait builds on the is-sensor trait defined in <a href="https://yeps.yaq.fyi/302/">YEP-302</a>.
+That trait defines a standard way of accessing the sensor data and metadata.
+The scope of this trait is only the software triggering feature.</p>
 <h1 id="proposal">Proposal<a class="headerlink" href="#proposal" title="Permanent link"> ¶</a></h1>
 <p>This trait requires is-sensor: see <a href="https://yeps.yaq.fyi/302/">YEP-302</a>.</p>
-<p>This trait defines the concept of "looping".
-When a sensor is looping, it should self-trigger the moment the previous acquisition is done.
-In certain cases, setting a sensor to looping makes client implementations much easier.
-Daemons will remain always busy while looping.</p>
-<p>This trait defines the concept of a "measurement_id".
-This is an integer that should increase every time the measure message is called.
-<code>get_measured</code> returns this measurement_id as a channel.</p>
+<p>The principle feature of the has-measure-trigger is the addition of the <code>measure</code> method.
+This method can be called to initiate a measurement.
+Because measurements might take some time to complete, the <code>measure</code> method does not wait to return the results of the measurement.
+Instead, it merely returns the <code>measurement_id</code> of the measurement that was initiated (the "next" measurement).
+Clients will use the messages defined by <a href="https://yeps.yaq.fyi/302/">YEP-302</a> to access the data once the measurement is complete.
+Clients will be assured of measurement order by comparing the <code>measurement_id</code> returned by <code>get_measured</code> to tme <code>measurement_id</code> that was returned by <code>measure</code> previously.</p>
+<p>has-measure-trigger does not change the fundamental nature of <code>measurement_id</code> as described by <a href="https://yeps.yaq.fyi/302/">YEP-302</a>: <code>measurement_id</code> increments when the channel values are changed.
+That is, when a measurement completes.
+The <code>measurement_id</code> returned by <code>measure</code> can be thought of as the id of the NEXT measurement.
+The value returned by <code>measure</code> will never be the same as returned by <code>get_measurement_id</code>.</p>
+<p>The fact that a measurement can be initiated implies that daemons implementing has-measure-trigger can, at some times, be not measuring.
+We tie the state of busy to the act of measurement.
+A daemon will remain busy as long as it is actively measuring and will release busy once it becomes idle again.
+This is natural in many orchestration situations where software will want to wait for all sensors to finish measuring before proceeding.</p>
+<p>It's very important that the behavior of the <code>measure</code> method is consistent, especially with respect to order.
+One crucial detail: what happens when <code>measure</code> is called during a measurement?
+In this case daemons implementing has-measure-trigger MUST return the <code>measurement_id</code> corresponding to the currently ongoing measurement.
+They MUST NOT halt the ongoing measurement.
+If a <code>measure</code> command is recieved during an ongoing measurement, that DOES NOT imply that the daemon should "remember" to initiate a new measurement once the ongoing measurement finishes.
+<code>measure</code> will only initiate a measurement if the sensor is idle at that time.</p>
+<p>As an auxillary feature to <code>measure</code>, this trait defines the concept of "looping".
+A looping sensor will "self-trigger" as quickly as it can.
+This implies that the sensor will always remain busy.
+Looping state is set by the argument <code>loop</code> to <code>measure</code>, default false.
+A configuration option <code>loop_at_startup</code> and a message <code>stop_looping</code> must also be implemented.
+Conveniently, a looping sensor behaves exactly like the generic sensor described in <a href="https://yeps.yaq.fyi/302/">YEP-302</a>.
+Clients that aren't interested in micromanaging order of measurement with respect to acquisition flow will find this convinient.</p>
+<table>
+<thead>
+<tr>
+<th>client</th>
+<th>daemon</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>startup</td>
+</tr>
+<tr>
+<td>handshake</td>
+<td>handshake</td>
+</tr>
+<tr>
+<td>requests <code>get_measurement_id</code></td>
+<td>responds <code>0</code></td>
+</tr>
+<tr>
+<td>requests <code>get_measured</code></td>
+<td>responds <code>{}</code></td>
+</tr>
+<tr>
+<td>requests <code>busy</code></td>
+<td>responds <code>false</code></td>
+</tr>
+<tr>
+<td>requests <code>measure</code></td>
+<td>begins acquisition <br> returns <code>1</code></td>
+</tr>
+<tr>
+<td>requests <code>get_measurement_id</code></td>
+<td>continues acquisition <br> responds <code>0</code></td>
+</tr>
+<tr>
+<td>requests <code>get_measured</code></td>
+<td>continues acquisition <br> responds <code>{}</code></td>
+</tr>
+<tr>
+<td>requests <code>busy</code></td>
+<td>continues acquisition <br> responds <code>true</code></td>
+</tr>
+<tr>
+<td>requests <code>measure</code></td>
+<td>continues acquisition <br> responds <code>1</code></td>
+</tr>
+<tr>
+<td>waits...</td>
+<td>finishes acquisition</td>
+</tr>
+<tr>
+<td>requests <code>get_measurement_id</code></td>
+<td>responds <code>1</code></td>
+</tr>
+<tr>
+<td>requests <code>get_measured</code></td>
+<td>responds <code>{measurement_id=1, ...}</code></td>
+</tr>
+<tr>
+<td>requests <code>busy</code></td>
+<td>responds <code>false</code></td>
+</tr>
+<tr>
+<td>requests <code>measure(loop=true)</code></td>
+<td>begins acquisition <br> returns <code>2</code></td>
+</tr>
+<tr>
+<td>waits...</td>
+<td>completes several acquisitions</td>
+</tr>
+<tr>
+<td>requests <code>get_measured</code></td>
+<td>continues acquisition <br> responds <code>{measurement_id=7, ...}</code></td>
+</tr>
+<tr>
+<td>requests <code>busy</code></td>
+<td>responds <code>true</code></td>
+</tr>
+<tr>
+<td>requests <code>stop_looping</code></td>
+<td>continues acquisition <br> no response</td>
+</tr>
+<tr>
+<td>waits...</td>
+<td>finishes acquisition</td>
+</tr>
+<tr>
+<td>requests <code>get_measurement_id</code></td>
+<td>responds <code>8</code></td>
+</tr>
+<tr>
+<td>requests <code>busy</code></td>
+<td>responds <code>false</code></td>
+</tr>
+</tbody>
+</table>
 <h2 id="config-loop_at_startup">config: loop_at_startup<a class="headerlink" href="#config-loop_at_startup" title="Permanent link"> ¶</a></h2>
 <p>type: boolean</p>
 <p>default: false</p>
@@ -75,7 +196,7 @@ parameter: loop: default: false</p>
 <hr>
 
 <p>
-built 2022-08-02 15:24:12
+built 2022-08-09 20:27:49
                                     
 <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
 </p>
