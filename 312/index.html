@@ -23,7 +23,7 @@
 <tr><th>Authors:</th><td>Dan Kohler <ddkohler@wisc.edu></td></tr>
 <tr><th>Status:</th><td>accepted</td></tr>
 <tr><th>Tags:</th><td>trait</td></tr>
-<tr><th>Post-History:</th><td>2022-06-01</td></tr>
+<tr><th>Post-History:</th><td>2022-06-01, 2023-06-26</td></tr>
 </table>
 
 
@@ -40,6 +40,10 @@
 </ul>
 </li>
 <li><a href="#specification">Specification</a><ul>
+<li><a href="#config">Config</a><ul>
+<li><a href="#native_limits">native_limits</a></li>
+</ul>
+</li>
 <li><a href="#state">State</a><ul>
 <li><a href="#native_reference_position-float">native_reference_position (float)</a></li>
 </ul>
@@ -112,6 +116,11 @@ Recording parameters into metadata ensures that acquisitions will have the neces
 This trait expands the <code>has-limits</code> trait by controlling motor positions using two coordinate systems.
 One frame (the "transformed" frame) is for common client control.
 The other frame (the "native" frame) reports position in terms of low-level motor control.</p>
+<h2 id="config">Config<a class="headerlink" href="#config" title="Permanent link"> ¶</a></h2>
+<h3 id="native_limits">native_limits<a class="headerlink" href="#native_limits" title="Permanent link"> ¶</a></h3>
+<p>type: array</p>
+<p>default: [-inf, inf]</p>
+<p>Bounds of motion specified in native coordinates.  To specify bounds in transformed coordinates, use <code>limits</code>.</p>
 <h2 id="state">State<a class="headerlink" href="#state" title="Permanent link"> ¶</a></h2>
 <h3 id="native_reference_position-float">native_reference_position (float)<a class="headerlink" href="#native_reference_position-float" title="Permanent link"> ¶</a></h3>
 <p>The reference position, expressed in native coordinates.
@@ -187,7 +196,7 @@ This is so that state values will remain valid even when transforms change.</p>
 <hr>
 
 <p>
-built 2022-11-29 15:38:07
+built 2023-09-21 15:53:27
                                     
 <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>: no copyright
 </p>
